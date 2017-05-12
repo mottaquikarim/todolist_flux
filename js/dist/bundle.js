@@ -63,32 +63,83 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
-/* 1 */
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _TodoInput = __webpack_require__(2);
+var _TodoInput = __webpack_require__(1);
 
+var _ListItem = __webpack_require__(3);
+
+// const todos = []; they will be ListItems
 var AppData = {
 	todos: [],
 	nextTaskIndex: -1,
 	numCompleted: 0,
 	numLeft: 0,
 	currentTodoValue: 'LOL'
-}; // const todos = []; they will be ListItems
+};
 
+var createNewTodo = function createNewTodo(oldStore, props) {
 
+	// ... update the old store
+
+	var newTodoText = props.newTodoText;
+	var todos = oldStore.todos;
+
+	// ... create new store
+
+	var newStore = Object.assign({}, oldStore, {
+		todos: todos.concat((0, _ListItem.listItem)(newTodoText))
+	});
+
+	// ... return new data
+	return newStore;
+};
+
+var actions = {
+	"CREATE_TODO": function CREATE_TODO(oldStore, additionalProps) {
+		return createNewTodo(oldStore, additionalProps);
+	},
+	"MARK_COMPLETED": function MARK_COMPLETED() {}
+};
+
+var dispatcher = function dispatcher(store, render) {
+	return function (actionName, props) {
+		store = actions[actionName](store, props);
+		render(store);
+	}; // what to return
+}; // dispatcher
+
+function appRender(store) {
+	_TodoInput.todoInput.render(store.currentTodoValue);
+	todoList(store.todos);
+}
+var myApplicationDispatch = dispatcher(AppData, appRender);
 (0, _TodoInput.todoInput)(AppData.currentTodoValue, '#app');
 
+myApplicationDispatch('CREATE_TODO', {
+	newTodoText: 'wake up'
+});
+myApplicationDispatch('CREATE_TODO', {
+	newTodoText: 'drank'
+});
+
 /***/ }),
-/* 2 */
+/* 1 */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed: SyntaxError: Unexpected token (11:6)\n\n\u001b[0m \u001b[90m  9 | \u001b[39m\t\t\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mrender()\u001b[33m;\u001b[39m\n \u001b[90m 10 | \u001b[39m\t}\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 | \u001b[39m\t\t\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mroot\u001b[33m.\u001b[39maddEventListener(\u001b[32m'keydown'\u001b[39m\u001b[33m,\u001b[39m (e) \u001b[33m=>\u001b[39m {\n \u001b[90m    | \u001b[39m\t\t    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 | \u001b[39m\t\t\t\u001b[36mconst\u001b[39m {target\u001b[33m,\u001b[39m keyCode} \u001b[33m=\u001b[39m e\u001b[33m;\u001b[39m\n \u001b[90m 13 | \u001b[39m\t\t\t\u001b[36mif\u001b[39m (target\u001b[33m.\u001b[39mclassList\u001b[33m.\u001b[39mcontains(\u001b[32m'input'\u001b[39m) \u001b[33m||\u001b[39m target\u001b[33m.\u001b[39mclosest(\u001b[32m'input'\u001b[39m)) {\n \u001b[90m 14 | \u001b[39m\t\t\t\t\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mupdateValue(target\u001b[33m.\u001b[39mvalue\u001b[33m,\u001b[39m keyCode)\u001b[33m;\u001b[39m\u001b[0m\n");
+
+/***/ }),
+/* 2 */,
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -100,104 +151,35 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.todoInput = todoInput;
-
-var _BaseComponent2 = __webpack_require__(3);
-
-var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+exports.listItem = listItem;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+var ListItem = exports.ListItem = function () {
+	function ListItem(todoItem) {
+		_classCallCheck(this, ListItem);
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TodoInput = function (_BaseComponent) {
-	_inherits(TodoInput, _BaseComponent);
-
-	function TodoInput(currentTodoValue, container) {
-		_classCallCheck(this, TodoInput);
-
-		var _this = _possibleConstructorReturn(this, (TodoInput.__proto__ || Object.getPrototypeOf(TodoInput)).call(this, container));
-
-		_this.value = currentTodoValue;
-		_this.initEvents();
-		_this.render();
-		return _this;
+		this.do = todoItem;
+		this.complete = false;
 	}
 
-	_createClass(TodoInput, [{
-		key: 'initEvents',
-		value: function initEvents() {
-			var _this2 = this;
-
-			this.root.addEventListener('keydown', function (e) {
-				var target = e.target,
-				    keyCode = e.keyCode;
-
-				if (target.classList.contains('input') || target.closest('input')) {
-					_this2.updateValue(target.value, keyCode);
-				}
-			});
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			this.root.innerHTML = '\n<div class="ui fluid icon input">\n    <input type="text" placeholder="Search a very wide input..." value=' + this.value + ' autofocus="true">\n    <i class="search icon"></i>\n</div> \t\t\n\t\t';
-		}
-	}, {
-		key: 'updateValue',
-		value: function updateValue(value, keyCode) {
-			console.log('OLD value', this.value, keyCode);
-			if (keyCode === 13) {
-				this.value = value;
-				this.render();
-			}
-			console.log('NEW value', this.value);
+	_createClass(ListItem, [{
+		key: "markCompleted",
+		value: function markCompleted() {
+			this.complete = true;
 		}
 	}]);
 
-	return TodoInput;
-}(_BaseComponent3.default);
+	return ListItem;
+}();
 
-function todoInput() {
+function listItem() {
 	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 		args[_key] = arguments[_key];
 	}
 
-	return new (Function.prototype.bind.apply(TodoInput, [null].concat(args)))();
+	return new (Function.prototype.bind.apply(ListItem, [null].concat(args)))();
 }
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var getSuperRandomNum = function getSuperRandomNum() {
-	return Date.now() * Math.floor(Math.random() * 10);
-};
-
-var BaseComponent = function BaseComponent(container) {
-	_classCallCheck(this, BaseComponent);
-
-	var root = document.createElement('div');
-	root.classList.add('js-input-' + getSuperRandomNum());
-	document.querySelector(container).appendChild(root);
-
-	this.root = root;
-};
-
-exports.default = BaseComponent;
 
 /***/ })
 /******/ ]);

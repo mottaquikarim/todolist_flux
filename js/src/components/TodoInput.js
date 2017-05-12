@@ -8,7 +8,6 @@ class TodoInput extends BaseComponent {
 		this.initEvents();
 		this.render();
 	}
-	initEvents() {
 		this.root.addEventListener('keydown', (e) => {
 			const {target, keyCode} = e;
 			if (target.classList.contains('input') || target.closest('input')) {
