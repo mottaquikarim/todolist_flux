@@ -30,7 +30,7 @@ const createNewTodo = (oldStore, props) => {
 
 
 const actions = {
-	"CREATE_TODO": (oldStore, additionalProps) => createNewTodo(oldStore, additionalProps),
+	"INPUT_ENTERED": (oldStore, additionalProps) => createNewTodo(oldStore, additionalProps),
 	"MARK_COMPLETED": () => {},
 	// "DELETE_TODO": () => {
 
@@ -44,7 +44,7 @@ const actions = {
 	// }
 }
 
-const dispatcher = (store, render) => {
+const dispatcher = (store, actions, render) => {
 	return (actionName, props) => {
 		store = actions[actionName](store, props);
 		render(store);
@@ -56,5 +56,5 @@ function appRender(store) {
     t.refreshProps(store.currentTodoValue)
 }
 
-const myApplicationDispatch = dispatcher(AppData, appRender);
+const myApplicationDispatch = dispatcher(AppData, actions, appRender);
 const t = todoInput(AppData.currentTodoValue, '#app', myApplicationDispatch);

@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -124,7 +124,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.todoInput = todoInput;
 
-var _BaseComponent2 = __webpack_require__(3);
+var _BaseComponent2 = __webpack_require__(2);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
@@ -208,6 +208,35 @@ function todoInput() {
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var getSuperRandomNum = function getSuperRandomNum() {
+	return Date.now() * Math.floor(Math.random() * 10);
+};
+
+var BaseComponent = function BaseComponent(container) {
+	_classCallCheck(this, BaseComponent);
+
+	var root = document.createElement('div');
+	root.classList.add('js-input-' + getSuperRandomNum());
+	document.querySelector(container).appendChild(root);
+
+	this.root = root;
+};
+
+exports.default = BaseComponent;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _TodoInput = __webpack_require__(1);
 
 var _ListItem = __webpack_require__(0);
@@ -240,13 +269,13 @@ var createNewTodo = function createNewTodo(oldStore, props) {
 };
 
 var actions = {
-	"CREATE_TODO": function CREATE_TODO(oldStore, additionalProps) {
+	"INPUT_ENTERED": function INPUT_ENTERED(oldStore, additionalProps) {
 		return createNewTodo(oldStore, additionalProps);
 	},
 	"MARK_COMPLETED": function MARK_COMPLETED() {}
 };
 
-var dispatcher = function dispatcher(store, render) {
+var dispatcher = function dispatcher(store, actions, render) {
 	return function (actionName, props) {
 		store = actions[actionName](store, props);
 		render(store);
@@ -258,37 +287,8 @@ function appRender(store) {
 	t.refreshProps(store.currentTodoValue);
 }
 
-var myApplicationDispatch = dispatcher(AppData, appRender);
+var myApplicationDispatch = dispatcher(AppData, actions, appRender);
 var t = (0, _TodoInput.todoInput)(AppData.currentTodoValue, '#app', myApplicationDispatch);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var getSuperRandomNum = function getSuperRandomNum() {
-	return Date.now() * Math.floor(Math.random() * 10);
-};
-
-var BaseComponent = function BaseComponent(container) {
-	_classCallCheck(this, BaseComponent);
-
-	var root = document.createElement('div');
-	root.classList.add('js-input-' + getSuperRandomNum());
-	document.querySelector(container).appendChild(root);
-
-	this.root = root;
-};
-
-exports.default = BaseComponent;
 
 /***/ })
 /******/ ]);
