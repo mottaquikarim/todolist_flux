@@ -1,13 +1,16 @@
 import BaseComponent from './BaseComponent';
 
 class TodoInput extends BaseComponent {
-	constructor(currentTodoValue, container) {
+	constructor(currentTodoValue, container, dispatcher) {
 		super(container);
+
+        this.dispatcher = dispatcher;
 
 		this.value = currentTodoValue;
 		this.initEvents();
 		this.render();
-	}
+    }
+    initEvents() {
 		this.root.addEventListener('keydown', (e) => {
 			const {target, keyCode} = e;
 			if (target.classList.contains('input') || target.closest('input')) {
@@ -17,21 +20,26 @@ class TodoInput extends BaseComponent {
 			
 		});
 	}
+    refreshProps(newObj) {
+		this.value = newObj;
+        this.render();
+    }
 	render() {
 		this.root.innerHTML = `
 <div class="ui fluid icon input">
-    <input type="text" placeholder="Search a very wide input..." value=${this.value} autofocus="true">
+    <input type="text" placeholder="Search a very wide input..." value="${this.value}" autofocus="true">
     <i class="search icon"></i>
 </div> 		
 		`
 	}
 	updateValue(value, keyCode) {
-		console.log('OLD value', this.value, keyCode)
 		if (keyCode === 13) {
-			this.value = value;
-			this.render();
+            console.log('dispatching', value)
+
+            this.dispatcher('CREATE_TODO', {
+                newTodoText: value, 
+            });
 		}
-		console.log('NEW value', this.value)
 	}
 }
 

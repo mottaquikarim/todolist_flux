@@ -20,7 +20,8 @@ const createNewTodo = (oldStore, props) => {
 
 	// ... create new store
 	const newStore = Object.assign({}, oldStore, {
-		todos: todos.concat(listItem(newTodoText))
+		todos: todos.concat(listItem(newTodoText)),
+        currentTodoValue: '',
 	});
 
 	// ... return new data
@@ -51,19 +52,9 @@ const dispatcher = (store, render) => {
 }; // dispatcher
 
 function appRender(store) {
-	todoInput.render(store.currentTodoValue);
-	todoList(store.todos)
+    console.log('here', store, store.todos);
+    t.refreshProps(store.currentTodoValue)
 }
+
 const myApplicationDispatch = dispatcher(AppData, appRender);
-todoInput(AppData.currentTodoValue, '#app');
-
-myApplicationDispatch('CREATE_TODO', {
-	newTodoText: 'wake up'
-});
-myApplicationDispatch('CREATE_TODO', {
-	newTodoText: 'drank'
-});
-
-
-
-
+const t = todoInput(AppData.currentTodoValue, '#app', myApplicationDispatch);
