@@ -4,7 +4,7 @@ class TodoInput extends BaseComponent {
 	constructor(currentTodoValue, container, dispatcher) {
 		super(container);
 
-        this.dispatcher = dispatcher;
+        this.dispatcher = dispatcher || (() => null);
 
 		this.value = currentTodoValue;
 		this.initEvents();

@@ -1,7 +1,8 @@
 export class ListItem {
-	constructor(todoItem) {
+	constructor(todoItem, index) {
 		this.do = todoItem;
 		this.complete = false;
+		this.index = index;
 	}
 
 	markCompleted() {
