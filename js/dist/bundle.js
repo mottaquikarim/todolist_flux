@@ -210,16 +210,18 @@ function todoInput() {
 
 var _TodoInput = __webpack_require__(1);
 
+var _TodoList = __webpack_require__(5);
+
 var _ListItem = __webpack_require__(0);
 
-// const todos = []; they will be ListItems
 var AppData = {
 	todos: [],
 	nextTaskIndex: -1,
 	numCompleted: 0,
 	numLeft: 0,
 	currentTodoValue: 'LOL'
-};
+}; // const todos = []; they will be ListItems
+
 
 var createNewTodo = function createNewTodo(oldStore, props) {
 
@@ -254,12 +256,15 @@ var dispatcher = function dispatcher(store, render) {
 }; // dispatcher
 
 function appRender(store) {
-	console.log('here', store, store.todos);
 	t.refreshProps(store.currentTodoValue);
+	list.refreshProps(store.todos);
 }
+
+document.querySelector('#app').innerHTML = "";
 
 var myApplicationDispatch = dispatcher(AppData, appRender);
 var t = (0, _TodoInput.todoInput)(AppData.currentTodoValue, '#app', myApplicationDispatch);
+var list = (0, _TodoList.todoList)(AppData.todos, '#app', myApplicationDispatch);
 
 /***/ }),
 /* 3 */
@@ -282,13 +287,155 @@ var BaseComponent = function BaseComponent(container) {
 	_classCallCheck(this, BaseComponent);
 
 	var root = document.createElement('div');
-	root.classList.add('js-input-' + getSuperRandomNum());
+	var className = 'js-input-' + getSuperRandomNum();
+	root.classList.add(className);
 	document.querySelector(container).appendChild(root);
 
 	this.root = root;
+	this.rootClassName = '.' + className;
 };
 
 exports.default = BaseComponent;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.TodoItem = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.todoItem = todoItem;
+
+var _BaseComponent2 = __webpack_require__(3);
+
+var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TodoItem = exports.TodoItem = function (_BaseComponent) {
+    _inherits(TodoItem, _BaseComponent);
+
+    function TodoItem(ListItem, container, dispatcher) {
+        _classCallCheck(this, TodoItem);
+
+        var _this = _possibleConstructorReturn(this, (TodoItem.__proto__ || Object.getPrototypeOf(TodoItem)).call(this, container));
+
+        _this.dispatcher = dispatcher;
+        _this.data = ListItem;
+
+        _this.render();
+        return _this;
+    }
+
+    _createClass(TodoItem, [{
+        key: 'refreshProps',
+        value: function refreshProps(newProps) {
+            this.data = newProps;
+            this.render();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var isComplete = this.data.complete ? 'green' : '';
+            this.root.innerHTML = '\n<div class="ui segment ' + isComplete + '">\n    <h4>' + this.data.do + '</h4>\n</div>\n        ';
+        }
+    }]);
+
+    return TodoItem;
+}(_BaseComponent3.default);
+
+function todoItem() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    return new (Function.prototype.bind.apply(TodoItem, [null].concat(args)))();
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.TodoList = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.todoList = todoList;
+
+var _BaseComponent2 = __webpack_require__(3);
+
+var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
+
+var _TodoItem = __webpack_require__(4);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+console.log(_TodoItem.TodoItem);
+
+var TodoList = exports.TodoList = function (_BaseComponent) {
+    _inherits(TodoList, _BaseComponent);
+
+    function TodoList(todos, container, dispatcher) {
+        _classCallCheck(this, TodoList);
+
+        var _this = _possibleConstructorReturn(this, (TodoList.__proto__ || Object.getPrototypeOf(TodoList)).call(this, container));
+
+        _this.dispatcher = dispatcher;
+        _this.container = container;
+        _this.todoItemComponents = todos.map(function (todo) {
+            return new _TodoItem.TodoItem(todo, _this.rootClassName, _this.dispatcher);
+        });
+        return _this;
+    }
+
+    _createClass(TodoList, [{
+        key: 'refreshProps',
+        value: function refreshProps(newProps) {
+            var _this2 = this;
+
+            this.root.innerHTML = '';
+
+            this.todoItemComponents = newProps.map(function (todo) {
+                return new _TodoItem.TodoItem(todo, _this2.rootClassName, _this2.dispatcher);
+            });
+        }
+    }]);
+
+    return TodoList;
+}(_BaseComponent3.default);
+
+function todoList() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    return new (Function.prototype.bind.apply(TodoList, [null].concat(args)))();
+}
 
 /***/ })
 /******/ ]);

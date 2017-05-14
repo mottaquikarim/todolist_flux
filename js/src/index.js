@@ -1,5 +1,6 @@
 // const todos = []; they will be ListItems
 import {todoInput} from './components/TodoInput';
+import {todoList} from './components/TodoList';
 
 import {listItem} from './ListItem';
 
@@ -52,9 +53,12 @@ const dispatcher = (store, render) => {
 }; // dispatcher
 
 function appRender(store) {
-    console.log('here', store, store.todos);
     t.refreshProps(store.currentTodoValue)
+    list.refreshProps(store.todos);
 }
+
+document.querySelector('#app').innerHTML = "";
 
 const myApplicationDispatch = dispatcher(AppData, appRender);
 const t = todoInput(AppData.currentTodoValue, '#app', myApplicationDispatch);
+const list = todoList(AppData.todos, '#app', myApplicationDispatch);
