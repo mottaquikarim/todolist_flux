@@ -6,6 +6,7 @@ export class TodoItem extends BaseComponent {
 
         this.dispatcher = dispatcher;
         this.data = ListItem;
+        console.log(this.data)
 
         this.initEvents();
 		this.render();
@@ -18,6 +19,11 @@ export class TodoItem extends BaseComponent {
                     index: this.data.index,
                 });
             }
+            if (target.classList.contains('js-mark-completed') || target.closest('.js-mark-completed')) {
+                this.dispatcher('MARK_COMPLETED', {
+                    index: this.data.index,
+                });        
+            }
         });
     }
     refreshProps(newProps) {
@@ -26,10 +32,16 @@ export class TodoItem extends BaseComponent {
     }
     render() {
         const isComplete = this.data.complete ? 'green' : '';
+        const hideButton = this.data.complete ? 'display: none;' : '';
 		this.root.innerHTML = `
-<div class="ui segment ${isComplete}" style="display: flex;">
-    <h4 style="margin-bottom: 0;">${this.data.do}</h4>
-    <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>
+<div class="ui segment ${isComplete}">
+    <div style="display: flex; width: 100%;">
+        <h4 style="margin-bottom: 0;">${this.data.do}</h4>
+        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>
+    </div>
+    <div style="text-align: right; margin-top: 10px; ${hideButton}">
+        <button class="ui button green mini js-mark-completed">Mark Completed</button>
+    </div>
 </div>
         `;
     }

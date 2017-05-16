@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -107,39 +107,28 @@ exports.default = BaseComponent;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.actions = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _reducers = __webpack_require__(9);
 
-exports.listItem = listItem;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ListItem = exports.ListItem = function () {
-	function ListItem(todoItem, index) {
-		_classCallCheck(this, ListItem);
-
-		this.do = todoItem;
-		this.complete = false;
-		this.index = index;
+var actions = exports.actions = {
+	"CREATE_TODO": function CREATE_TODO() {
+		return _reducers.createNewTodo.apply(undefined, arguments);
+	},
+	"DELETE_TODO": function DELETE_TODO(oldStore, additionalProps) {
+		return (0, _reducers.deleteTodo)(oldStore, additionalProps);
+	},
+	"MARK_COMPLETED": function MARK_COMPLETED(oldStore, additionalProps) {
+		return (0, _reducers.markCompleted)(oldStore, additionalProps);
 	}
+	// "UPDATE_TODO": () => {
 
-	_createClass(ListItem, [{
-		key: "markCompleted",
-		value: function markCompleted() {
-			this.complete = true;
-		}
-	}]);
+	// },
 
-	return ListItem;
-}();
+	// "REMINDER_TODO": () => {
 
-function listItem() {
-	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-		args[_key] = arguments[_key];
-	}
-
-	return new (Function.prototype.bind.apply(ListItem, [null].concat(args)))();
-}
+	// }
+};
 
 /***/ }),
 /* 2 */
@@ -255,7 +244,7 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-var _TodoItem = __webpack_require__(4);
+var _TodoItem = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -315,6 +304,85 @@ function todoList() {
 
 
 Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var dispatcher = exports.dispatcher = function dispatcher(store, actions, render) {
+	return function (actionName, props) {
+		store = actions[actionName](store, props);
+		render(store);
+	}; // what to return
+}; // dispatcher
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var AppData = exports.AppData = {
+	todos: [],
+	nextTaskIndex: -1,
+	numCompleted: 0,
+	numLeft: 0,
+	currentTodoValue: ''
+};
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.listItem = listItem;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ListItem = exports.ListItem = function () {
+	function ListItem(todoItem, index) {
+		_classCallCheck(this, ListItem);
+
+		this.do = todoItem;
+		this.complete = false;
+		this.index = index;
+	}
+
+	_createClass(ListItem, [{
+		key: "markCompleted",
+		value: function markCompleted() {
+			this.complete = true;
+		}
+	}]);
+
+	return ListItem;
+}();
+
+function listItem() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
+
+	return new (Function.prototype.bind.apply(ListItem, [null].concat(args)))();
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.TodoItem = undefined;
@@ -345,6 +413,7 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
 
         _this.dispatcher = dispatcher;
         _this.data = ListItem;
+        console.log(_this.data);
 
         _this.initEvents();
         _this.render();
@@ -365,6 +434,11 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                         index: _this2.data.index
                     });
                 }
+                if (target.classList.contains('js-mark-completed') || target.closest('.js-mark-completed')) {
+                    _this2.dispatcher('MARK_COMPLETED', {
+                        index: _this2.data.index
+                    });
+                }
             });
         }
     }, {
@@ -377,7 +451,8 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
         key: 'render',
         value: function render() {
             var isComplete = this.data.complete ? 'green' : '';
-            this.root.innerHTML = '\n<div class="ui segment ' + isComplete + '" style="display: flex;">\n    <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n    <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n</div>\n        ';
+            var hideButton = this.data.complete ? 'display: none;' : '';
+            this.root.innerHTML = '\n<div class="ui segment ' + isComplete + '">\n    <div style="display: flex; width: 100%;">\n        <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n    </div>\n    <div style="text-align: right; margin-top: 10px; ' + hideButton + '">\n        <button class="ui button green mini js-mark-completed">Mark Completed</button>\n    </div>\n</div>\n        ';
         }
     }]);
 
@@ -393,17 +468,17 @@ function todoItem() {
 }
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _dispatcher = __webpack_require__(6);
+var _dispatcher = __webpack_require__(4);
 
-var _store = __webpack_require__(7);
+var _store = __webpack_require__(5);
 
-var _actions = __webpack_require__(8);
+var _actions = __webpack_require__(1);
 
 var _TodoInput = __webpack_require__(2);
 
@@ -422,64 +497,6 @@ var t = (0, _TodoInput.todoInput)(_store.AppData.currentTodoValue, '#app', myApp
 var list = (0, _TodoList.todoList)(_store.AppData.todos, '#app', myApplicationDispatch);
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-var dispatcher = exports.dispatcher = function dispatcher(store, actions, render) {
-	return function (actionName, props) {
-		store = actions[actionName](store, props);
-		render(store);
-	}; // what to return
-}; // dispatcher
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-var AppData = exports.AppData = {
-	todos: [],
-	nextTaskIndex: -1,
-	numCompleted: 0,
-	numLeft: 0,
-	currentTodoValue: 'LOL'
-};
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.actions = undefined;
-
-var _reducers = __webpack_require__(9);
-
-var actions = exports.actions = {
-	"CREATE_TODO": function CREATE_TODO(oldStore, additionalProps) {
-		return (0, _reducers.createNewTodo)(oldStore, additionalProps);
-	},
-	"DELETE_TODO": function DELETE_TODO(oldStore, additionalProps) {
-		return (0, _reducers.deleteTodo)(oldStore, additionalProps);
-	}
-};
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -489,9 +506,9 @@ var actions = exports.actions = {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.deleteTodo = exports.createNewTodo = undefined;
+exports.markCompleted = exports.deleteTodo = exports.createNewTodo = undefined;
 
-var _ListItem = __webpack_require__(1);
+var _ListItem = __webpack_require__(6);
 
 var createNewTodo = exports.createNewTodo = function createNewTodo(oldStore, props) {
 
@@ -552,9 +569,25 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 	}
 
 	var newStore = Object.assign({}, oldStore, {
-		todos: todos.filter(function (currentItem, index) {
-			return index !== oldIndex;
-		})
+		todos: newTodos
+	});
+	return newStore;
+};
+
+var markCompleted = exports.markCompleted = function markCompleted(oldStore, props) {
+	console.log('LOL in markCompleted tho');
+	var todos = oldStore.todos;
+	var oldIndex = props.index;
+
+	// ALSO VALID:
+	// const todoItemToComplete = todos[oldIndex];
+	// todoItemToComplete.markCompleted();
+
+	todos[oldIndex].markCompleted();
+
+	// ... create new store
+	var newStore = Object.assign({}, oldStore, {
+		todos: todos.slice(0)
 	});
 	return newStore;
 };

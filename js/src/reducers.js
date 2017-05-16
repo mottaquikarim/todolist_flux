@@ -35,7 +35,37 @@ export const deleteTodo = (oldStore, props) => {
 	}
 	// ... create new store
 	const newStore = Object.assign({}, oldStore, {
-		todos: todos.filter((currentItem, index) => index !== oldIndex),
+		todos: newTodos,
 	});
 	return newStore;
 }
+
+export const markCompleted = (oldStore, props) => {
+	console.log('LOL in markCompleted tho')
+	const {todos} = oldStore;
+	const {index: oldIndex} = props;
+
+	// ALSO VALID:
+	// const todoItemToComplete = todos[oldIndex];
+	// todoItemToComplete.markCompleted();
+
+	todos[oldIndex].markCompleted();
+
+	// ... create new store
+	const newStore = Object.assign({}, oldStore, {
+		todos: todos.slice(0),
+	});
+	return newStore;
+}
+
+
+
+
+
+
+
+
+
+
+
+
