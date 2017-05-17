@@ -5,8 +5,16 @@ export class ListItem {
 		this.index = index;
 	}
 
-	markCompleted() {
-		this.complete = true;
+	// markCompleted() {
+	// 	this.complete = true;
+	// }
+
+	// unmarkCompleted() {
+	// 	this.complete = false;
+	// }
+
+	toggleComplete() {
+		this.complete = !this.complete;
 	}
 }
 

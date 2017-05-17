@@ -1,7 +1,9 @@
 import {
 	createNewTodo,
 	deleteTodo,
-	markCompleted,
+	toggleComplete,
+	// markCompleted,
+	// unmarkCompleted,
 } from './reducers';
 
 export const actions = {
@@ -9,9 +11,13 @@ export const actions = {
 	"DELETE_TODO": (oldStore, additionalProps) => {
 		return deleteTodo(oldStore, additionalProps);
 	},
-	"MARK_COMPLETED": (oldStore, additionalProps) => {
-		return markCompleted(oldStore, additionalProps)
-	}
+	"TOGGLE_COMPLETE": (...args) => toggleComplete(...args),
+	// "MARK_COMPLETED": (oldStore, additionalProps) => {
+	// 	return markCompleted(oldStore, additionalProps)
+	// },
+	// "UNMARK_COMPLETED": (oldStore, additionalProps) => {
+	// 	return unmarkCompleted(oldStore, additionalProps)
+	// },
 	// "UPDATE_TODO": () => {
 
 	// },

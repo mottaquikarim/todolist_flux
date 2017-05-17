@@ -118,16 +118,9 @@ var actions = exports.actions = {
 	"DELETE_TODO": function DELETE_TODO(oldStore, additionalProps) {
 		return (0, _reducers.deleteTodo)(oldStore, additionalProps);
 	},
-	"MARK_COMPLETED": function MARK_COMPLETED(oldStore, additionalProps) {
-		return (0, _reducers.markCompleted)(oldStore, additionalProps);
+	"TOGGLE_COMPLETE": function TOGGLE_COMPLETE() {
+		return _reducers.toggleComplete.apply(undefined, arguments);
 	}
-	// "UPDATE_TODO": () => {
-
-	// },
-
-	// "REMINDER_TODO": () => {
-
-	// }
 };
 
 /***/ }),
@@ -357,10 +350,18 @@ var ListItem = exports.ListItem = function () {
 		this.index = index;
 	}
 
+	// markCompleted() {
+	// 	this.complete = true;
+	// }
+
+	// unmarkCompleted() {
+	// 	this.complete = false;
+	// }
+
 	_createClass(ListItem, [{
-		key: "markCompleted",
-		value: function markCompleted() {
-			this.complete = true;
+		key: "toggleComplete",
+		value: function toggleComplete() {
+			this.complete = !this.complete;
 		}
 	}]);
 
@@ -434,11 +435,21 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                         index: _this2.data.index
                     });
                 }
-                if (target.classList.contains('js-mark-completed') || target.closest('.js-mark-completed')) {
-                    _this2.dispatcher('MARK_COMPLETED', {
+                if (target.classList.contains('js-toggle-complete') || target.closest('.js-toggle-complete')) {
+                    _this2.dispatcher('TOGGLE_COMPLETE', {
                         index: _this2.data.index
                     });
                 }
+                // if (target.classList.contains('js-mark-complete') || target.closest('.js-mark-complete')) {
+                //     this.dispatcher('MARK_COMPLETED', {
+                //         index: this.data.index,
+                //     });        
+                // }
+                // if (target.classList.contains('js-mark-incomplete') || target.closest('.js-mark-incomplete')) {
+                //     this.dispatcher('UNMARK_COMPLETED', {
+                //         index: this.data.index,
+                //     });        
+                // }
             });
         }
     }, {
@@ -450,9 +461,21 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
     }, {
         key: 'render',
         value: function render() {
-            var isComplete = this.data.complete ? 'green' : '';
-            var hideButton = this.data.complete ? 'display: none;' : '';
-            this.root.innerHTML = '\n<div class="ui segment ' + isComplete + '">\n    <div style="display: flex; width: 100%;">\n        <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n    </div>\n    <div style="text-align: right; margin-top: 10px; ' + hideButton + '">\n        <button class="ui button green mini js-mark-completed">Mark Completed</button>\n    </div>\n</div>\n        ';
+            var isComplete = this.data.complete ? 'red' : 'green';
+
+            this.root.innerHTML = '\n<div class="ui segment ' + isComplete + '">\n    <div style="display: flex; width: 100%;">\n        <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n    </div>\n    ' + this.renderCompleteButton() + '\n</div>\n        ';
+        }
+    }, {
+        key: 'renderCompleteButton',
+        value: function renderCompleteButton() {
+            var complete = this.data.complete;
+
+            var buttonColorClass = complete ? 'red' : 'green';
+            var marked = complete ? 'Incomplete' : 'Complete';
+
+            console.log(complete);
+
+            return '\n<div style="text-align: right; margin-top: 10px;">\n    <button class="ui button ' + buttonColorClass + ' mini js-toggle-complete">Mark ' + marked + '</button>\n</div>\n        ';
         }
     }]);
 
@@ -506,7 +529,7 @@ var list = (0, _TodoList.todoList)(_store.AppData.todos, '#app', myApplicationDi
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.markCompleted = exports.deleteTodo = exports.createNewTodo = undefined;
+exports.toggleComplete = exports.deleteTodo = exports.createNewTodo = undefined;
 
 var _ListItem = __webpack_require__(6);
 
@@ -574,7 +597,7 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 	return newStore;
 };
 
-var markCompleted = exports.markCompleted = function markCompleted(oldStore, props) {
+var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, props) {
 	console.log('LOL in markCompleted tho');
 	var todos = oldStore.todos;
 	var oldIndex = props.index;
@@ -583,14 +606,67 @@ var markCompleted = exports.markCompleted = function markCompleted(oldStore, pro
 	// const todoItemToComplete = todos[oldIndex];
 	// todoItemToComplete.markCompleted();
 
-	todos[oldIndex].markCompleted();
+	todos[oldIndex].toggleComplete();
+
+	var complete = [];
+	var incomplete = [];
+	for (var i = 0; i < todos.length; i++) {
+		var currentTodo = todos[i];
+		var isComplete = currentTodo.complete;
+		if (isComplete) {
+			complete.push(currentTodo);
+		} else {
+			incomplete.push(currentTodo);
+		}
+	}
+
+	var newTodos = incomplete.concat(complete).map(function (todo, i) {
+		todo.index = i;
+		return todo;
+	});
 
 	// ... create new store
 	var newStore = Object.assign({}, oldStore, {
-		todos: todos.slice(0)
+		todos: newTodos
 	});
 	return newStore;
 };
+
+// export const markCompleted = (oldStore, props) => {
+// 	console.log('LOL in markCompleted tho')
+// 	const {todos} = oldStore;
+// 	const {index: oldIndex} = props;
+
+// 	// ALSO VALID:
+// 	// const todoItemToComplete = todos[oldIndex];
+// 	// todoItemToComplete.markCompleted();
+
+// 	todos[oldIndex].markCompleted();
+
+// 	// ... create new store
+// 	const newStore = Object.assign({}, oldStore, {
+// 		todos: todos.slice(0),
+// 	});
+// 	return newStore;
+// }
+
+// export const unmarkCompleted = (oldStore, props) => {
+// 	console.log('LOL in markCompleted tho')
+// 	const {todos} = oldStore;
+// 	const {index: oldIndex} = props;
+
+// 	// ALSO VALID:
+// 	// const todoItemToComplete = todos[oldIndex];
+// 	// todoItemToComplete.markCompleted();
+
+// 	todos[oldIndex].unmarkCompleted();
+
+// 	// ... create new store
+// 	const newStore = Object.assign({}, oldStore, {
+// 		todos: todos.slice(0),
+// 	});
+// 	return newStore;	
+// }
 
 /***/ })
 /******/ ]);
