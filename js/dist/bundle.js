@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -109,7 +109,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.actions = undefined;
 
-var _reducers = __webpack_require__(9);
+var _reducers = __webpack_require__(10);
 
 var actions = exports.actions = {
 	"CREATE_TODO": function CREATE_TODO() {
@@ -124,7 +124,8 @@ var actions = exports.actions = {
 };
 
 /***/ }),
-/* 2 */
+/* 2 */,
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -218,7 +219,7 @@ function todoInput() {
 }
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -237,7 +238,7 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-var _TodoItem = __webpack_require__(7);
+var _TodoItem = __webpack_require__(8);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -290,7 +291,7 @@ function todoList() {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -307,7 +308,7 @@ var dispatcher = exports.dispatcher = function dispatcher(store, actions, render
 }; // dispatcher
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,13 +320,13 @@ Object.defineProperty(exports, "__esModule", {
 var AppData = exports.AppData = {
 	todos: [],
 	nextTaskIndex: -1,
-	numCompleted: 0,
+	numComplete: 0,
 	numLeft: 0,
 	currentTodoValue: ''
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -377,7 +378,7 @@ function listItem() {
 }
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -491,36 +492,48 @@ function todoItem() {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _dispatcher = __webpack_require__(4);
+var _dispatcher = __webpack_require__(5);
 
-var _store = __webpack_require__(5);
+var _store = __webpack_require__(6);
 
 var _actions = __webpack_require__(1);
 
-var _TodoInput = __webpack_require__(2);
+var _TodoInput = __webpack_require__(3);
 
-var _TodoList = __webpack_require__(3);
+var _TodoList = __webpack_require__(4);
+
+var _BetterCounter = __webpack_require__(11);
+
+/* FLUX REQUIREMENTS */
+document.querySelector('#app').innerHTML = "";
 
 /* COMPONENTS */
-document.querySelector('#app').innerHTML = ""; /* FLUX REQUIREMENTS */
 
 
 var myApplicationDispatch = (0, _dispatcher.dispatcher)(_store.AppData, _actions.actions, function (store) {
-  t.refreshProps(store.currentTodoValue);
-  list.refreshProps(store.todos);
+	t.refreshProps(store.currentTodoValue);
+	count.refreshProps({
+		numLeft: store.numLeft,
+		numComplete: store.numComplete
+	});
+	list.refreshProps(store.todos);
 });
 
 var t = (0, _TodoInput.todoInput)(_store.AppData.currentTodoValue, '#app', myApplicationDispatch);
+var count = (0, _BetterCounter.betterCounter)({
+	numLeft: _store.AppData.numLeft,
+	numComplete: _store.AppData.numComplete
+}, '#app');
 var list = (0, _TodoList.todoList)(_store.AppData.todos, '#app', myApplicationDispatch);
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -531,7 +544,22 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.toggleComplete = exports.deleteTodo = exports.createNewTodo = undefined;
 
-var _ListItem = __webpack_require__(6);
+var _ListItem = __webpack_require__(7);
+
+var computeNumLeftAndComplete = function computeNumLeftAndComplete(todos) {
+
+	var numComplete = 0;
+	for (var i = 0; i < todos.length; i++) {
+		var currentTodo = todos[i];
+		if (currentTodo.complete) {
+			numComplete++;
+		}
+	}
+
+	var numLeft = todos.length - numComplete;
+
+	return { numLeft: numLeft, numComplete: numComplete };
+};
 
 var createNewTodo = exports.createNewTodo = function createNewTodo(oldStore, props) {
 
@@ -540,12 +568,20 @@ var createNewTodo = exports.createNewTodo = function createNewTodo(oldStore, pro
 	var newTodoText = props.newTodoText;
 	var todos = oldStore.todos;
 
+	var _computeNumLeftAndCom = computeNumLeftAndComplete(todos),
+	    numLeft = _computeNumLeftAndCom.numLeft,
+	    numComplete = _computeNumLeftAndCom.numComplete;
+
 	// ... create new store
+
 
 	var newStore = Object.assign({}, oldStore, {
 		todos: todos.concat((0, _ListItem.listItem)(newTodoText, todos.length)),
-		currentTodoValue: ''
+		currentTodoValue: '',
+		numLeft: numLeft + 1,
+		numComplete: numComplete
 	});
+	console.log(newStore);
 
 	// ... return new data
 	return newStore;
@@ -556,6 +592,9 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 	var todos = oldStore.todos;
 	var oldIndex = props.index;
 
+	var _computeNumLeftAndCom2 = computeNumLeftAndComplete(todos),
+	    numLeft = _computeNumLeftAndCom2.numLeft,
+	    numComplete = _computeNumLeftAndCom2.numComplete;
 
 	var newTodos = [];
 	var i = 0;
@@ -592,8 +631,11 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 	}
 
 	var newStore = Object.assign({}, oldStore, {
-		todos: newTodos
+		todos: newTodos,
+		numComplete: numComplete,
+		numLeft: numLeft - 1
 	});
+	console.log(newStore);
 	return newStore;
 };
 
@@ -667,6 +709,86 @@ var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, 
 // 	});
 // 	return newStore;	
 // }
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.betterCounter = exports.BetterCounter = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _BaseComponent2 = __webpack_require__(0);
+
+var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BetterCounter = exports.BetterCounter = function (_BaseComponent) {
+	_inherits(BetterCounter, _BaseComponent);
+
+	function BetterCounter(props, container) {
+		_classCallCheck(this, BetterCounter);
+
+		var _this = _possibleConstructorReturn(this, (BetterCounter.__proto__ || Object.getPrototypeOf(BetterCounter)).call(this, container));
+
+		var numLeft = props.numLeft,
+		    numComplete = props.numComplete;
+
+		_this.numLeft = numLeft;
+		_this.numComplete = numComplete;
+
+		_this.render();
+		return _this;
+	}
+
+	_createClass(BetterCounter, [{
+		key: 'refreshProps',
+		value: function refreshProps(newProps) {
+			var numLeft = newProps.numLeft,
+			    numComplete = newProps.numComplete;
+
+			this.numLeft = numLeft;
+			this.numComplete = numComplete;
+
+			this.render();
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			var numLeft = this.numLeft,
+			    numComplete = this.numComplete;
+
+			this.root.innerHTML = '\n<div>\n\t' + numLeft + ' / ' + numComplete + '\n</div>\n\t\t';
+		}
+	}]);
+
+	return BetterCounter;
+}(_BaseComponent3.default);
+
+// export function counter(...args) {
+// 	return new Counter(...args);
+// }
+
+var betterCounter = exports.betterCounter = function betterCounter() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
+
+	return new (Function.prototype.bind.apply(BetterCounter, [null].concat(args)))();
+};
 
 /***/ })
 /******/ ]);

@@ -1,17 +1,36 @@
 import {listItem} from './ListItem';
 
+const computeNumLeftAndComplete = (todos) => {
+	
+	let numComplete = 0;
+	for (let i = 0; i < todos.length; i++) {
+		const currentTodo = todos[i];
+		if (currentTodo.complete) {
+			numComplete++;
+		}
+	}
+
+	const numLeft = todos.length - numComplete;
+
+	return {numLeft, numComplete};
+}
+
 export const createNewTodo = (oldStore, props) => {
 
 	// ... update the old store
 
 	const {newTodoText} = props;
 	const {todos} = oldStore;
+	const {numLeft, numComplete} = computeNumLeftAndComplete(todos);
 
 	// ... create new store
 	const newStore = Object.assign({}, oldStore, {
 		todos: todos.concat(listItem(newTodoText, todos.length)),
         currentTodoValue: '',
+        numLeft: numLeft + 1,
+        numComplete,
 	});
+	console.log(newStore);
 
 	// ... return new data
 	return newStore;
@@ -21,6 +40,8 @@ export const deleteTodo = (oldStore, props) => {
 	console.log('MADE IT TO REDUCER LOL', props)
 	const {todos} = oldStore;
 	const {index: oldIndex} = props;
+	const {numLeft, numComplete} = computeNumLeftAndComplete(todos);
+
 
 	const newTodos = [];
 	let i = 0;
@@ -36,7 +57,10 @@ export const deleteTodo = (oldStore, props) => {
 	// ... create new store
 	const newStore = Object.assign({}, oldStore, {
 		todos: newTodos,
+		numComplete,
+		numLeft: numLeft - 1,
 	});
+	console.log(newStore)
 	return newStore;
 }
 
