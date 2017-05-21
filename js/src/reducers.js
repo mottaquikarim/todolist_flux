@@ -140,9 +140,30 @@ export const toggleImportant = (oldStore, props) => {
 
 		todos[oldIndex].toggleImportant();
 
-		const complete = todos.filter(current => current.complete);
-		const important = todos.filter(current => current.important && !current.complete);
-		const incomplete = todos.filter(current => !current.complete && !current.important);
+		const [important, incomplete, complete] = todos.reduce((_newTodosArray, current, index) => {
+			if (current.complete) {
+				// push into complete array
+				_newTodosArray[2].push(current)
+			}
+			else if (current.important && !current.complete) {
+				// push into important array
+				_newTodosArray[0].push(current);
+			}
+			else {
+				// push into incomplete array
+				_newTodosArray[1].push(current);
+			}
+			
+			return _newTodosArray;
+		}, [[], [], []]);
+
+		// console.log(newTodos)
+		// ^ [[], [], []]
+		// ^ [important, incomplete, complete]
+
+		// const complete = todos.filter(current => current.complete);
+		// const important = todos.filter(current => current.important && !current.complete);
+		// const incomplete = todos.filter(current => !current.complete && !current.important);
 
 		const newTodos = important.concat(incomplete, complete).map((todo, i) => {
 			todo.index = i;

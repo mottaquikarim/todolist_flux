@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -109,7 +109,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.actions = undefined;
 
-var _reducers = __webpack_require__(10);
+var _reducers = __webpack_require__(12);
 
 var actions = exports.actions = {
 	"CREATE_TODO": function CREATE_TODO() {
@@ -318,7 +318,7 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-var _TodoItem = __webpack_require__(8);
+var _TodoItem = __webpack_require__(10);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -378,6 +378,85 @@ function todoList() {
 
 
 Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.TestComp = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ReactLiteLOL = __webpack_require__(9);
+
+var _ReactLiteLOL2 = _interopRequireDefault(_ReactLiteLOL);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TestComp = exports.TestComp = function (_ReactLite) {
+    _inherits(TestComp, _ReactLite);
+
+    function TestComp(props) {
+        _classCallCheck(this, TestComp);
+
+        var _this = _possibleConstructorReturn(this, (TestComp.__proto__ || Object.getPrototypeOf(TestComp)).call(this, props));
+
+        _this.state = {
+            foo: 1
+        };
+        return _this;
+    }
+
+    _createClass(TestComp, [{
+        key: 'updateState',
+        value: function updateState() {
+            this.setState({
+                foo: 2,
+                bar: 1
+            });
+        }
+    }, {
+        key: 'componentWillUpdate',
+        value: function componentWillUpdate(nP, nS) {
+            console.log('---------- componetWillUpdate');
+            console.log(nP, nS);
+            console.log('---------- componetWillUpdate');
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(pP, pS) {
+            console.log('---------- componetDidUpdate');
+            console.log(pP, pS);
+            console.log('---------- componetDidUpdate');
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nP) {
+            console.log('---------- componentWillReceiveProps');
+            console.log(nP);
+            console.log('---------- componentWillReceiveProps');
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            console.log('rendering...');
+        }
+    }]);
+
+    return TestComp;
+}(_ReactLiteLOL2.default);
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 var dispatcher = exports.dispatcher = function dispatcher(store, actions, render) {
@@ -388,7 +467,7 @@ var dispatcher = exports.dispatcher = function dispatcher(store, actions, render
 }; // dispatcher
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -406,7 +485,7 @@ var AppData = exports.AppData = {
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -464,7 +543,82 @@ function listItem() {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ReactLite = function () {
+    function ReactLite(props) {
+        _classCallCheck(this, ReactLite);
+
+        this.props = props;
+    }
+
+    _createClass(ReactLite, [{
+        key: "setProps",
+        value: function setProps(props) {
+            var nextProps = Object.assign({}, props);
+
+            this.componentWillReceiveProps(nextProps);
+
+            var shouldUpdate = this.shouldComponentUpdate(nextProps, this.state);
+            if (!shouldUpdate) return;
+
+            this.componentWillUpdate(nextProps, this.state);
+            this.render();
+            this.componentDidUpdate(this.props, this.state);
+
+            this.props = nextProps;
+        }
+    }, {
+        key: "setState",
+        value: function setState(state) {
+            var nextState = Object.assign({}, this.state, state);
+
+            var shouldUpdate = this.shouldComponentUpdate(this.props, nextState);
+            if (!shouldUpdate) return;
+
+            this.componentWillUpdate(this.props, nextState);
+            this.render();
+            this.componentDidUpdate(this.props, this.state);
+
+            this.state = nextState;
+        }
+        // stubs
+
+    }, {
+        key: "shouldComponentUpdate",
+        value: function shouldComponentUpdate(nextProps, nextState) {
+            return true;
+        }
+    }, {
+        key: "componentWillUpdate",
+        value: function componentWillUpdate(nextProps, nextState) {}
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate(prevProps, prevState) {}
+    }, {
+        key: "componentWillReceiveProps",
+        value: function componentWillReceiveProps(nextProps) {}
+    }]);
+
+    return ReactLite;
+}();
+
+exports.default = ReactLite;
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -599,15 +753,15 @@ function todoItem() {
 }
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _dispatcher = __webpack_require__(5);
+var _dispatcher = __webpack_require__(6);
 
-var _store = __webpack_require__(6);
+var _store = __webpack_require__(7);
 
 var _actions = __webpack_require__(1);
 
@@ -617,7 +771,7 @@ var _TodoList = __webpack_require__(4);
 
 var _BetterCounter = __webpack_require__(2);
 
-var _testComp = __webpack_require__(11);
+var _testComp = __webpack_require__(5);
 
 /* COMPONENTS */
 document.querySelector('#app').innerHTML = ""; /* FLUX REQUIREMENTS */
@@ -652,7 +806,7 @@ k.setProps();
 */
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -663,7 +817,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.toggleImportant = exports.toggleComplete = exports.deleteTodo = exports.createNewTodo = undefined;
 
-var _ListItem = __webpack_require__(7);
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _ListItem = __webpack_require__(8);
 
 var computeNumLeftAndComplete = function computeNumLeftAndComplete(todos) {
 
@@ -830,15 +986,34 @@ var toggleImportant = exports.toggleImportant = function toggleImportant(oldStor
 
 	todos[oldIndex].toggleImportant();
 
-	var complete = todos.filter(function (current) {
-		return current.complete;
-	});
-	// const important = todos.filter(current => current.important && !current.complete);
-	var incomplete = todos.filter(function (current) {
-		return !current.complete;
-	});
+	var _todos$reduce = todos.reduce(function (_newTodosArray, current, index) {
+		if (current.complete) {
+			// push into complete array
+			_newTodosArray[2].push(current);
+		} else if (current.important && !current.complete) {
+			// push into important array
+			_newTodosArray[0].push(current);
+		} else {
+			// push into incomplete array
+			_newTodosArray[1].push(current);
+		}
 
-	var newTodos = incomplete.concat(complete).map(function (todo, i) {
+		return _newTodosArray;
+	}, [[], [], []]),
+	    _todos$reduce2 = _slicedToArray(_todos$reduce, 3),
+	    important = _todos$reduce2[0],
+	    incomplete = _todos$reduce2[1],
+	    complete = _todos$reduce2[2];
+
+	// console.log(newTodos)
+	// ^ [[], [], []]
+	// ^ [important, incomplete, complete]
+
+	// const complete = todos.filter(current => current.complete);
+	// const important = todos.filter(current => current.important && !current.complete);
+	// const incomplete = todos.filter(current => !current.complete && !current.important);
+
+	var newTodos = important.concat(incomplete, complete).map(function (todo, i) {
 		todo.index = i;
 		return todo;
 	});
@@ -905,160 +1080,6 @@ var toggleImportant = exports.toggleImportant = function toggleImportant(oldStor
 // 	});
 // 	return newStore;	
 // }
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.TestComp = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _ReactLiteLOL = __webpack_require__(12);
-
-var _ReactLiteLOL2 = _interopRequireDefault(_ReactLiteLOL);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TestComp = exports.TestComp = function (_ReactLite) {
-    _inherits(TestComp, _ReactLite);
-
-    function TestComp(props) {
-        _classCallCheck(this, TestComp);
-
-        var _this = _possibleConstructorReturn(this, (TestComp.__proto__ || Object.getPrototypeOf(TestComp)).call(this, props));
-
-        _this.state = {
-            foo: 1
-        };
-        return _this;
-    }
-
-    _createClass(TestComp, [{
-        key: 'updateState',
-        value: function updateState() {
-            this.setState({
-                foo: 2,
-                bar: 1
-            });
-        }
-    }, {
-        key: 'componentWillUpdate',
-        value: function componentWillUpdate(nP, nS) {
-            console.log('---------- componetWillUpdate');
-            console.log(nP, nS);
-            console.log('---------- componetWillUpdate');
-        }
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate(pP, pS) {
-            console.log('---------- componetDidUpdate');
-            console.log(pP, pS);
-            console.log('---------- componetDidUpdate');
-        }
-    }, {
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(nP) {
-            console.log('---------- componentWillReceiveProps');
-            console.log(nP);
-            console.log('---------- componentWillReceiveProps');
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            console.log('rendering...');
-        }
-    }]);
-
-    return TestComp;
-}(_ReactLiteLOL2.default);
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ReactLite = function () {
-    function ReactLite(props) {
-        _classCallCheck(this, ReactLite);
-
-        this.props = props;
-    }
-
-    _createClass(ReactLite, [{
-        key: "setProps",
-        value: function setProps(props) {
-            var nextProps = Object.assign({}, props);
-
-            this.componentWillReceiveProps(nextProps);
-
-            var shouldUpdate = this.shouldComponentUpdate(nextProps, this.state);
-            if (!shouldUpdate) return;
-
-            this.componentWillUpdate(nextProps, this.state);
-            this.render();
-            this.componentDidUpdate(this.props, this.state);
-
-            this.props = nextProps;
-        }
-    }, {
-        key: "setState",
-        value: function setState(state) {
-            var nextState = Object.assign({}, this.state, state);
-
-            var shouldUpdate = this.shouldComponentUpdate(this.props, nextState);
-            if (!shouldUpdate) return;
-
-            this.componentWillUpdate(this.props, nextState);
-            this.render();
-            this.componentDidUpdate(this.props, this.state);
-
-            this.state = nextState;
-        }
-        // stubs
-
-    }, {
-        key: "shouldComponentUpdate",
-        value: function shouldComponentUpdate(nextProps, nextState) {
-            return true;
-        }
-    }, {
-        key: "componentWillUpdate",
-        value: function componentWillUpdate(nextProps, nextState) {}
-    }, {
-        key: "componentDidUpdate",
-        value: function componentDidUpdate(prevProps, prevState) {}
-    }, {
-        key: "componentWillReceiveProps",
-        value: function componentWillReceiveProps(nextProps) {}
-    }]);
-
-    return ReactLite;
-}();
-
-exports.default = ReactLite;
 
 /***/ })
 /******/ ]);
