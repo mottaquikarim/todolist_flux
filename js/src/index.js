@@ -7,6 +7,7 @@ import {actions} from './actions';
 import {todoInput} from './components/TodoInput';
 import {todoList} from './components/TodoList';
 import {betterCounter} from './components/BetterCounter';
+import {TestComp} from './components/testComp';
 
 
 document.querySelector('#app').innerHTML = "";
@@ -26,3 +27,7 @@ const count = betterCounter({
 	numComplete: Store.numComplete
 }, '#app');
 const list = todoList(Store.todos, '#app', myApplicationDispatch);
+/*
+const k = new TestComp();
+k.updateState();
+*/

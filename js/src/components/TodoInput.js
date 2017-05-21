@@ -34,8 +34,6 @@ class TodoInput extends BaseComponent {
 	}
 	updateValue(value, keyCode) {
 		if (keyCode === 13) {
-            console.log('dispatching', value)
-
             this.dispatcher('CREATE_TODO', {
                 newTodoText: value, 
             });

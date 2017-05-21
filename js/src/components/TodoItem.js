@@ -6,7 +6,7 @@ export class TodoItem extends BaseComponent {
 
         this.dispatcher = dispatcher;
         this.data = ListItem;
-        console.log(this.data)
+        
 
         this.initEvents();
 		this.render();
@@ -58,7 +58,7 @@ export class TodoItem extends BaseComponent {
         const buttonColorClass = complete ? 'red' : 'green';
         const marked = complete ? 'Incomplete' : 'Complete';
 
-        console.log(complete)
+        
 
         return `
 <div style="text-align: right; margin-top: 10px;">

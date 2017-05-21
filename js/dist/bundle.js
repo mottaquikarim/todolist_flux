@@ -184,7 +184,7 @@ var BetterCounter = exports.BetterCounter = function (_BaseComponent) {
 			var numLeft = this.numLeft,
 			    numComplete = this.numComplete;
 
-			this.root.innerHTML = '\n<div>\n\t' + numLeft + ' / ' + numComplete + '\n</div>\n\t\t';
+			this.root.innerHTML = '\n<div>\n\tnumLeft: ' + numLeft + ' / numComplete: ' + numComplete + '\n</div>\n\t\t';
 		}
 	}]);
 
@@ -277,8 +277,6 @@ var TodoInput = function (_BaseComponent) {
 		key: 'updateValue',
 		value: function updateValue(value, keyCode) {
 			if (keyCode === 13) {
-				console.log('dispatching', value);
-
 				this.dispatcher('CREATE_TODO', {
 					newTodoText: value
 				});
@@ -494,7 +492,6 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
 
         _this.dispatcher = dispatcher;
         _this.data = ListItem;
-        console.log(_this.data);
 
         _this.initEvents();
         _this.render();
@@ -553,8 +550,6 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
             var buttonColorClass = complete ? 'red' : 'green';
             var marked = complete ? 'Incomplete' : 'Complete';
 
-            console.log(complete);
-
             return '\n<div style="text-align: right; margin-top: 10px;">\n    <button class="ui button ' + buttonColorClass + ' mini js-toggle-complete">Mark ' + marked + '</button>\n</div>\n        ';
         }
     }]);
@@ -589,10 +584,10 @@ var _TodoList = __webpack_require__(4);
 
 var _BetterCounter = __webpack_require__(2);
 
-/* FLUX REQUIREMENTS */
-document.querySelector('#app').innerHTML = "";
+var _testComp = __webpack_require__(11);
 
 /* COMPONENTS */
+document.querySelector('#app').innerHTML = ""; /* FLUX REQUIREMENTS */
 
 
 var myApplicationDispatch = (0, _dispatcher.dispatcher)(_store.AppData, _actions.actions, function (store) {
@@ -610,6 +605,10 @@ var count = (0, _BetterCounter.betterCounter)({
 	numComplete: _store.AppData.numComplete
 }, '#app');
 var list = (0, _TodoList.todoList)(_store.AppData.todos, '#app', myApplicationDispatch);
+/*
+const k = new TestComp();
+k.updateState();
+*/
 
 /***/ }),
 /* 10 */
@@ -660,20 +659,15 @@ var createNewTodo = exports.createNewTodo = function createNewTodo(oldStore, pro
 		numLeft: numLeft + 1,
 		numComplete: numComplete
 	});
-	console.log(newStore);
 
 	// ... return new data
 	return newStore;
 };
 
 var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
-	console.log('MADE IT TO REDUCER LOL', props);
 	var todos = oldStore.todos;
 	var oldIndex = props.index;
 
-	var _computeNumLeftAndCom2 = computeNumLeftAndComplete(todos),
-	    numLeft = _computeNumLeftAndCom2.numLeft,
-	    numComplete = _computeNumLeftAndCom2.numComplete;
 
 	var newTodos = [];
 	var i = 0;
@@ -693,7 +687,6 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 			newTodos.push(oldTodo);
 			i++;
 		}
-		// ... create new store
 	} catch (err) {
 		_didIteratorError = true;
 		_iteratorError = err;
@@ -709,17 +702,48 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 		}
 	}
 
+	var _computeNumLeftAndCom2 = computeNumLeftAndComplete(todos),
+	    numLeft = _computeNumLeftAndCom2.numLeft,
+	    numComplete = _computeNumLeftAndCom2.numComplete;
+	// const deletedItem = todos[oldIndex];
+
+	// if (deletedItem.complete) {
+	// 	numComplete--;
+	// }
+	// else {
+	// 	numLeft--;
+	// }
+
 	var newStore = Object.assign({}, oldStore, {
 		todos: newTodos,
-		numComplete: numComplete,
-		numLeft: numLeft
+		numComplete: todos[oldIndex].complete ? numComplete - 1 : numComplete,
+		numLeft: !todos[oldIndex].complete ? numLeft - 1 : numLeft
 	});
-	console.log(newStore);
+
+	// ... compute the numLeft / numComplete methods
+	// const {numLeft, numComplete} = computeNumLeftAndComplete(newTodos);
+	// ... create new store
+	// const newStore = Object.assign({}, oldStore, {
+	// 	todos: newTodos,
+	//	numComplete,
+	//  numLeft,
+	// });
+
+	/*
+ const newStore = Object.assign(
+ 	{}, 									// initial object to add into
+ 	oldStore, 								// the OLD list of properties
+ 	{										// the ONE property we want to update
+ 		todos: newTodos,
+ 	}, 
+ 	computeNumLeftAndComplete(newTodos)		// the numLeft and numComplete properties
+ );
+ */
+
 	return newStore;
 };
 
 var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, props) {
-	console.log('LOL in markCompleted tho');
 	var todos = oldStore.todos;
 	var oldIndex = props.index;
 
@@ -790,6 +814,137 @@ var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, 
 // 	});
 // 	return newStore;	
 // }
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.TestComp = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ReactLiteLOL = __webpack_require__(12);
+
+var _ReactLiteLOL2 = _interopRequireDefault(_ReactLiteLOL);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TestComp = exports.TestComp = function (_ReactLite) {
+    _inherits(TestComp, _ReactLite);
+
+    function TestComp(props) {
+        _classCallCheck(this, TestComp);
+
+        var _this = _possibleConstructorReturn(this, (TestComp.__proto__ || Object.getPrototypeOf(TestComp)).call(this, props));
+
+        _this.state = {
+            foo: 1
+        };
+        return _this;
+    }
+
+    _createClass(TestComp, [{
+        key: 'updateState',
+        value: function updateState() {
+            this.setState({
+                foo: 2,
+                bar: 1
+            });
+        }
+    }, {
+        key: 'componentWillUpdate',
+        value: function componentWillUpdate(nP, nS) {
+            console.log('---------- componetWillUpdate');
+            console.log(nP, nS);
+            console.log('---------- componetWillUpdate');
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(pP, pS) {
+            console.log('---------- componetDidUpdate');
+            console.log(pP, pS);
+            console.log('---------- componetDidUpdate');
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            console.log('rendering...');
+        }
+    }]);
+
+    return TestComp;
+}(_ReactLiteLOL2.default);
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ReactLite = function () {
+    function ReactLite(props) {
+        _classCallCheck(this, ReactLite);
+
+        this.props = props;
+    }
+
+    _createClass(ReactLite, [{
+        key: "setProps",
+        value: function setProps(props) {}
+    }, {
+        key: "setState",
+        value: function setState(state) {
+            var nextState = Object.assign({}, this.state, state);
+
+            var shouldUpdate = this.shouldComponentUpdate(this.props, nextState);
+            if (!shouldUpdate) return;
+
+            this.componentWillUpdate(this.props, nextState);
+            this.render();
+            this.componentDidUpdate(this.props, this.state);
+
+            this.state = nextState;
+        }
+        // stubs
+
+    }, {
+        key: "shouldComponentUpdate",
+        value: function shouldComponentUpdate(nextProps, nextState) {
+            return true;
+        }
+    }, {
+        key: "componentWillUpdate",
+        value: function componentWillUpdate(nextProps, nextState) {}
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate(prevProps, prevState) {}
+    }]);
+
+    return ReactLite;
+}();
+
+exports.default = ReactLite;
 
 /***/ })
 /******/ ]);

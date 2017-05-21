@@ -21,7 +21,7 @@ export class BetterCounter extends BaseComponent {
 		const {numLeft, numComplete} = this
 		this.root.innerHTML = `
 <div>
-	${numLeft} / ${numComplete}
+	numLeft: ${numLeft} / numComplete: ${numComplete}
 </div>
 		`;
 	}

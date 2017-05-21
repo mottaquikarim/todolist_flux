@@ -30,18 +30,16 @@ export const createNewTodo = (oldStore, props) => {
         numLeft: numLeft + 1,
         numComplete,
 	});
-	console.log(newStore);
+	
 
 	// ... return new data
 	return newStore;
 }
 
 export const deleteTodo = (oldStore, props) => {
-	console.log('MADE IT TO REDUCER LOL', props)
 	const {todos} = oldStore;
 	const {index: oldIndex} = props;
-	const {numLeft, numComplete} = computeNumLeftAndComplete(todos);
-
+	
 
 	const newTodos = [];
 	let i = 0;
@@ -54,18 +52,48 @@ export const deleteTodo = (oldStore, props) => {
 		newTodos.push(oldTodo);
 		i++;
 	}
-	// ... create new store
+
+	const {numLeft, numComplete} = computeNumLeftAndComplete(todos);
+	// const deletedItem = todos[oldIndex];
+
+	// if (deletedItem.complete) {
+	// 	numComplete--;
+	// }
+	// else {
+	// 	numLeft--;
+	// }
+
 	const newStore = Object.assign({}, oldStore, {
 		todos: newTodos,
-		numComplete,
-		numLeft: numLeft,
+		numComplete: todos[oldIndex].complete ? numComplete - 1 : numComplete,
+ 	 	numLeft: !todos[oldIndex].complete ? numLeft - 1 : numLeft,
 	});
-	console.log(newStore)
+
+	// ... compute the numLeft / numComplete methods
+	// const {numLeft, numComplete} = computeNumLeftAndComplete(newTodos);
+	// ... create new store
+	// const newStore = Object.assign({}, oldStore, {
+	// 	todos: newTodos,
+	//	numComplete,
+ 	//  numLeft,
+	// });
+
+	/*
+	const newStore = Object.assign(
+		{}, 									// initial object to add into
+		oldStore, 								// the OLD list of properties
+		{										// the ONE property we want to update
+			todos: newTodos,
+		}, 
+		computeNumLeftAndComplete(newTodos)		// the numLeft and numComplete properties
+	);
+	*/
+	
 	return newStore;
 }
 
 export const toggleComplete = (oldStore, props) => {
-		console.log('LOL in markCompleted tho')
+		
 		const {todos} = oldStore;
 		const {index: oldIndex} = props;
 
