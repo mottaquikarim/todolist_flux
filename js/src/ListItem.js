@@ -2,6 +2,7 @@ export class ListItem {
 	constructor(todoItem, index) {
 		this.do = todoItem;
 		this.complete = false;
+		this.important = false;
 		this.index = index;
 	}
 
@@ -15,6 +16,10 @@ export class ListItem {
 
 	toggleComplete() {
 		this.complete = !this.complete;
+	}
+
+	toggleImportant() {
+		this.important = !this.important;
 	}
 }
 

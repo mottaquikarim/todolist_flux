@@ -130,6 +130,52 @@ export const toggleComplete = (oldStore, props) => {
 		return newStore;	
 }
 
+export const toggleImportant = (oldStore, props) => {
+		const {todos} = oldStore;
+		const {index: oldIndex} = props;
+
+		// ALSO VALID:
+		// const todoItemToComplete = todos[oldIndex];
+		// todoItemToComplete.markCompleted();
+
+		todos[oldIndex].toggleImportant();
+
+		const complete = todos.filter(current => current.complete);
+		const important = todos.filter(current => current.important && !current.complete);
+		const incomplete = todos.filter(current => !current.complete && !current.important);
+
+		const newTodos = important.concat(incomplete, complete).map((todo, i) => {
+			todo.index = i;
+			return todo;
+		});
+
+		// const complete = [];
+		// const incomplete = [];
+		// for (let i = 0; i < todos.length; i++) {
+		// 	const currentTodo = todos[i];
+		// 	const isComplete = currentTodo.complete;
+		// 	if (isComplete) {
+		// 		complete.push(currentTodo);
+		// 	}
+		// 	else {
+		// 		incomplete.push(currentTodo);
+		// 	}
+		// }
+
+		// const newTodos = incomplete.concat(complete).map((todo, i) => {
+		// 	todo.index = i;
+		// 	return todo;
+		// })
+
+		// ... create new store
+		const newStore = Object.assign({}, oldStore, {
+			todos: newTodos,
+			numComplete: complete.length,
+			numLeft: incomplete.length,
+		});
+		return newStore;		
+}
+
 // export const markCompleted = (oldStore, props) => {
 // 	console.log('LOL in markCompleted tho')
 // 	const {todos} = oldStore;

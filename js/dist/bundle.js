@@ -120,6 +120,9 @@ var actions = exports.actions = {
 	},
 	"TOGGLE_COMPLETE": function TOGGLE_COMPLETE() {
 		return _reducers.toggleComplete.apply(undefined, arguments);
+	},
+	"TOGGLE_IMPORTANT": function TOGGLE_IMPORTANT() {
+		return _reducers.toggleImportant.apply(undefined, arguments);
 	}
 };
 
@@ -425,6 +428,7 @@ var ListItem = exports.ListItem = function () {
 
 		this.do = todoItem;
 		this.complete = false;
+		this.important = false;
 		this.index = index;
 	}
 
@@ -440,6 +444,11 @@ var ListItem = exports.ListItem = function () {
 		key: "toggleComplete",
 		value: function toggleComplete() {
 			this.complete = !this.complete;
+		}
+	}, {
+		key: "toggleImportant",
+		value: function toggleImportant() {
+			this.important = !this.important;
 		}
 	}]);
 
@@ -517,16 +526,11 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                         index: _this2.data.index
                     });
                 }
-                // if (target.classList.contains('js-mark-complete') || target.closest('.js-mark-complete')) {
-                //     this.dispatcher('MARK_COMPLETED', {
-                //         index: this.data.index,
-                //     });        
-                // }
-                // if (target.classList.contains('js-mark-incomplete') || target.closest('.js-mark-incomplete')) {
-                //     this.dispatcher('UNMARK_COMPLETED', {
-                //         index: this.data.index,
-                //     });        
-                // }
+                if (target.classList.contains('js-toggle-important') || target.closest('.js-toggle-important')) {
+                    _this2.dispatcher('TOGGLE_IMPORTANT', {
+                        index: _this2.data.index
+                    });
+                }
             });
         }
     }, {
@@ -538,9 +542,28 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
     }, {
         key: 'render',
         value: function render() {
-            var isComplete = this.data.complete ? 'red' : 'green';
+            // const isComplete = this.data.complete ? 'red' : 'green';
+            // const isImportant = this.data.important ? 'purple': '';
+            var _data = this.data,
+                complete = _data.complete,
+                important = _data.important;
 
-            this.root.innerHTML = '\n<div class="ui segment ' + isComplete + '">\n    <div style="display: flex; width: 100%;">\n        <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n    </div>\n    ' + this.renderCompleteButton() + '\n</div>\n        ';
+            var colorClass = '';
+            if (complete) {
+                colorClass = 'red';
+            } else if (important) {
+                colorClass = 'purple';
+            } else {
+                colorClass = 'green';
+            }
+
+            /* DONT TRY THID AT HOME
+            const colorClass = (complete) ? 'red' : 
+                                            (important) ? 'purple' : 
+                                                          'green';
+            */
+
+            this.root.innerHTML = '\n<div class="ui segment ' + colorClass + '">\n    <div style="display: flex; width: 100%;">\n        <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n    </div>\n    ' + this.renderImportantButton() + '\n    ' + this.renderCompleteButton() + '\n</div>\n        ';
         }
     }, {
         key: 'renderCompleteButton',
@@ -551,6 +574,16 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
             var marked = complete ? 'Incomplete' : 'Complete';
 
             return '\n<div style="text-align: right; margin-top: 10px;">\n    <button class="ui button ' + buttonColorClass + ' mini js-toggle-complete">Mark ' + marked + '</button>\n</div>\n        ';
+        }
+    }, {
+        key: 'renderImportantButton',
+        value: function renderImportantButton() {
+            var important = this.data.important;
+
+            var buttonColorClass = important ? 'purple' : '';
+            var marked = important ? 'Unimportant' : 'important';
+
+            return '\n<div style="text-align: right; margin-top: 10px;">\n    <button class="ui button ' + buttonColorClass + ' mini js-toggle-important">Mark ' + marked + '</button>\n</div>\n        ';
         }
     }]);
 
@@ -597,6 +630,9 @@ var myApplicationDispatch = (0, _dispatcher.dispatcher)(_store.AppData, _actions
 		numComplete: store.numComplete
 	});
 	list.refreshProps(store.todos);
+	importantList.refreshProps(store.todos.filter(function (todo) {
+		return todo.important;
+	}));
 });
 
 var t = (0, _TodoInput.todoInput)(_store.AppData.currentTodoValue, '#app', myApplicationDispatch);
@@ -605,9 +641,14 @@ var count = (0, _BetterCounter.betterCounter)({
 	numComplete: _store.AppData.numComplete
 }, '#app');
 var list = (0, _TodoList.todoList)(_store.AppData.todos, '#app', myApplicationDispatch);
+var importantList = (0, _TodoList.todoList)(_store.AppData.todos.filter(function (todo) {
+	return todo.important;
+}), '#app', myApplicationDispatch);
+
 /*
 const k = new TestComp();
 k.updateState();
+k.setProps();
 */
 
 /***/ }),
@@ -620,7 +661,7 @@ k.updateState();
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.toggleComplete = exports.deleteTodo = exports.createNewTodo = undefined;
+exports.toggleImportant = exports.toggleComplete = exports.deleteTodo = exports.createNewTodo = undefined;
 
 var _ListItem = __webpack_require__(7);
 
@@ -779,6 +820,56 @@ var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, 
 	return newStore;
 };
 
+var toggleImportant = exports.toggleImportant = function toggleImportant(oldStore, props) {
+	var todos = oldStore.todos;
+	var oldIndex = props.index;
+
+	// ALSO VALID:
+	// const todoItemToComplete = todos[oldIndex];
+	// todoItemToComplete.markCompleted();
+
+	todos[oldIndex].toggleImportant();
+
+	var complete = todos.filter(function (current) {
+		return current.complete;
+	});
+	// const important = todos.filter(current => current.important && !current.complete);
+	var incomplete = todos.filter(function (current) {
+		return !current.complete;
+	});
+
+	var newTodos = incomplete.concat(complete).map(function (todo, i) {
+		todo.index = i;
+		return todo;
+	});
+
+	// const complete = [];
+	// const incomplete = [];
+	// for (let i = 0; i < todos.length; i++) {
+	// 	const currentTodo = todos[i];
+	// 	const isComplete = currentTodo.complete;
+	// 	if (isComplete) {
+	// 		complete.push(currentTodo);
+	// 	}
+	// 	else {
+	// 		incomplete.push(currentTodo);
+	// 	}
+	// }
+
+	// const newTodos = incomplete.concat(complete).map((todo, i) => {
+	// 	todo.index = i;
+	// 	return todo;
+	// })
+
+	// ... create new store
+	var newStore = Object.assign({}, oldStore, {
+		todos: newTodos,
+		numComplete: complete.length,
+		numLeft: incomplete.length
+	});
+	return newStore;
+};
+
 // export const markCompleted = (oldStore, props) => {
 // 	console.log('LOL in markCompleted tho')
 // 	const {todos} = oldStore;
@@ -878,6 +969,13 @@ var TestComp = exports.TestComp = function (_ReactLite) {
             console.log('---------- componetDidUpdate');
         }
     }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nP) {
+            console.log('---------- componentWillReceiveProps');
+            console.log(nP);
+            console.log('---------- componentWillReceiveProps');
+        }
+    }, {
         key: 'render',
         value: function render() {
             console.log('rendering...');
@@ -911,7 +1009,20 @@ var ReactLite = function () {
 
     _createClass(ReactLite, [{
         key: "setProps",
-        value: function setProps(props) {}
+        value: function setProps(props) {
+            var nextProps = Object.assign({}, props);
+
+            this.componentWillReceiveProps(nextProps);
+
+            var shouldUpdate = this.shouldComponentUpdate(nextProps, this.state);
+            if (!shouldUpdate) return;
+
+            this.componentWillUpdate(nextProps, this.state);
+            this.render();
+            this.componentDidUpdate(this.props, this.state);
+
+            this.props = nextProps;
+        }
     }, {
         key: "setState",
         value: function setState(state) {
@@ -939,6 +1050,9 @@ var ReactLite = function () {
     }, {
         key: "componentDidUpdate",
         value: function componentDidUpdate(prevProps, prevState) {}
+    }, {
+        key: "componentWillReceiveProps",
+        value: function componentWillReceiveProps(nextProps) {}
     }]);
 
     return ReactLite;
