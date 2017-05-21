@@ -124,7 +124,86 @@ var actions = exports.actions = {
 };
 
 /***/ }),
-/* 2 */,
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.betterCounter = exports.BetterCounter = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _BaseComponent2 = __webpack_require__(0);
+
+var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BetterCounter = exports.BetterCounter = function (_BaseComponent) {
+	_inherits(BetterCounter, _BaseComponent);
+
+	function BetterCounter(props, container) {
+		_classCallCheck(this, BetterCounter);
+
+		var _this = _possibleConstructorReturn(this, (BetterCounter.__proto__ || Object.getPrototypeOf(BetterCounter)).call(this, container));
+
+		var numLeft = props.numLeft,
+		    numComplete = props.numComplete;
+
+		_this.numLeft = numLeft;
+		_this.numComplete = numComplete;
+
+		_this.render();
+		return _this;
+	}
+
+	_createClass(BetterCounter, [{
+		key: 'refreshProps',
+		value: function refreshProps(newProps) {
+			var numLeft = newProps.numLeft,
+			    numComplete = newProps.numComplete;
+
+			this.numLeft = numLeft;
+			this.numComplete = numComplete;
+
+			this.render();
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			var numLeft = this.numLeft,
+			    numComplete = this.numComplete;
+
+			this.root.innerHTML = '\n<div>\n\t' + numLeft + ' / ' + numComplete + '\n</div>\n\t\t';
+		}
+	}]);
+
+	return BetterCounter;
+}(_BaseComponent3.default);
+
+// export function counter(...args) {
+// 	return new Counter(...args);
+// }
+
+var betterCounter = exports.betterCounter = function betterCounter() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
+
+	return new (Function.prototype.bind.apply(BetterCounter, [null].concat(args)))();
+};
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -508,7 +587,7 @@ var _TodoInput = __webpack_require__(3);
 
 var _TodoList = __webpack_require__(4);
 
-var _BetterCounter = __webpack_require__(11);
+var _BetterCounter = __webpack_require__(2);
 
 /* FLUX REQUIREMENTS */
 document.querySelector('#app').innerHTML = "";
@@ -633,7 +712,7 @@ var deleteTodo = exports.deleteTodo = function deleteTodo(oldStore, props) {
 	var newStore = Object.assign({}, oldStore, {
 		todos: newTodos,
 		numComplete: numComplete,
-		numLeft: numLeft - 1
+		numLeft: numLeft
 	});
 	console.log(newStore);
 	return newStore;
@@ -669,7 +748,9 @@ var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, 
 
 	// ... create new store
 	var newStore = Object.assign({}, oldStore, {
-		todos: newTodos
+		todos: newTodos,
+		numComplete: complete.length,
+		numLeft: incomplete.length
 	});
 	return newStore;
 };
@@ -709,86 +790,6 @@ var toggleComplete = exports.toggleComplete = function toggleComplete(oldStore, 
 // 	});
 // 	return newStore;	
 // }
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.betterCounter = exports.BetterCounter = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _BaseComponent2 = __webpack_require__(0);
-
-var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var BetterCounter = exports.BetterCounter = function (_BaseComponent) {
-	_inherits(BetterCounter, _BaseComponent);
-
-	function BetterCounter(props, container) {
-		_classCallCheck(this, BetterCounter);
-
-		var _this = _possibleConstructorReturn(this, (BetterCounter.__proto__ || Object.getPrototypeOf(BetterCounter)).call(this, container));
-
-		var numLeft = props.numLeft,
-		    numComplete = props.numComplete;
-
-		_this.numLeft = numLeft;
-		_this.numComplete = numComplete;
-
-		_this.render();
-		return _this;
-	}
-
-	_createClass(BetterCounter, [{
-		key: 'refreshProps',
-		value: function refreshProps(newProps) {
-			var numLeft = newProps.numLeft,
-			    numComplete = newProps.numComplete;
-
-			this.numLeft = numLeft;
-			this.numComplete = numComplete;
-
-			this.render();
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var numLeft = this.numLeft,
-			    numComplete = this.numComplete;
-
-			this.root.innerHTML = '\n<div>\n\t' + numLeft + ' / ' + numComplete + '\n</div>\n\t\t';
-		}
-	}]);
-
-	return BetterCounter;
-}(_BaseComponent3.default);
-
-// export function counter(...args) {
-// 	return new Counter(...args);
-// }
-
-var betterCounter = exports.betterCounter = function betterCounter() {
-	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-		args[_key] = arguments[_key];
-	}
-
-	return new (Function.prototype.bind.apply(BetterCounter, [null].concat(args)))();
-};
 
 /***/ })
 /******/ ]);

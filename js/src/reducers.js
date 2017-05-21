@@ -58,7 +58,7 @@ export const deleteTodo = (oldStore, props) => {
 	const newStore = Object.assign({}, oldStore, {
 		todos: newTodos,
 		numComplete,
-		numLeft: numLeft - 1,
+		numLeft: numLeft,
 	});
 	console.log(newStore)
 	return newStore;
@@ -96,6 +96,8 @@ export const toggleComplete = (oldStore, props) => {
 		// ... create new store
 		const newStore = Object.assign({}, oldStore, {
 			todos: newTodos,
+			numComplete: complete.length,
+			numLeft: incomplete.length,
 		});
 		return newStore;	
 }
