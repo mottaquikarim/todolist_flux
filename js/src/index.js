@@ -19,7 +19,6 @@ const myApplicationDispatch = dispatcher(Store, actions, store => {
 		numComplete: store.numComplete,
 	})
     list.refreshProps(store.todos);
-    importantList.refreshProps(store.todos.filter(todo => todo.important))
 });
 
 const t = todoInput(Store.currentTodoValue, '#app', myApplicationDispatch);
@@ -28,8 +27,6 @@ const count = betterCounter({
 	numComplete: Store.numComplete
 }, '#app');
 const list = todoList(Store.todos, '#app', myApplicationDispatch);
-const importantList = todoList(Store.todos.filter(todo => todo.important), '#app', myApplicationDispatch);
-
 /*
 const k = new TestComp();
 k.updateState();
