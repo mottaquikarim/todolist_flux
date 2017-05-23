@@ -77,23 +77,36 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var getSuperRandomNum = function getSuperRandomNum() {
 	return Date.now() * Math.floor(Math.random() * 10);
 };
 
-var BaseComponent = function BaseComponent(container) {
-	_classCallCheck(this, BaseComponent);
+var BaseComponent = function () {
+	function BaseComponent(container) {
+		_classCallCheck(this, BaseComponent);
 
-	var root = document.createElement('div');
-	var className = 'js-input-' + getSuperRandomNum();
-	root.classList.add(className);
-	document.querySelector(container).appendChild(root);
+		var root = document.createElement('div');
+		var className = 'js-input-' + getSuperRandomNum();
+		root.classList.add(className);
+		document.querySelector(container).appendChild(root);
 
-	this.root = root;
-	this.rootClassName = '.' + className;
-};
+		this.root = root;
+		this.rootClassName = '.' + className;
+	}
+
+	_createClass(BaseComponent, [{
+		key: 'isTarget',
+		value: function isTarget(className, target) {
+			return target.classList.contains(className) || target.closest('.' + className);
+		}
+	}]);
+
+	return BaseComponent;
+}();
 
 exports.default = BaseComponent;
 
@@ -656,6 +669,10 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
         _this.dispatcher = dispatcher;
         _this.data = ListItem;
 
+        _this.state = {
+            isEditMode: false
+        };
+
         _this.initEvents();
         _this.render();
         return _this;
@@ -670,20 +687,36 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                 var target = e.target,
                     keyCode = e.keyCode;
 
-                if (target.classList.contains('js-remove') || target.closest('.js-remove')) {
+                if (_this2.isTarget('js-remove', target)) {
                     _this2.dispatcher('DELETE_TODO', {
                         index: _this2.data.index
                     });
                 }
-                if (target.classList.contains('js-toggle-complete') || target.closest('.js-toggle-complete')) {
+                if (_this2.isTarget('js-toggle-complete', target)) {
                     _this2.dispatcher('TOGGLE_COMPLETE', {
                         index: _this2.data.index
                     });
                 }
-                if (target.classList.contains('js-toggle-important') || target.closest('.js-toggle-important')) {
+                if (_this2.isTarget('js-toggle-important', target)) {
                     _this2.dispatcher('TOGGLE_IMPORTANT', {
                         index: _this2.data.index
                     });
+                }
+                if (_this2.isTarget('js-todo-title', target)) {
+                    _this2.state.isEditMode = true;
+                    _this2.render();
+                }
+            });
+
+            this.root.addEventListener('keyup', function (_ref) {
+                var target = _ref.target,
+                    keyCode = _ref.keyCode;
+
+                if (_this2.isTarget('js-todo-title-editing', target)) {
+                    if (keyCode === 27) {
+                        _this2.state.isEditMode = false;
+                        _this2.render();
+                    }
                 }
             });
         }
@@ -711,13 +744,23 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                 colorClass = 'green';
             }
 
+            var isEditMode = this.state.isEditMode;
+
+            var title = '<h4 style="margin-bottom: 0; width: 100%;" class="js-todo-title">' + this.data.do + '</h4>';
+            var close = '<i style="text-align: right; cursor: pointer;" class="icon remove js-remove"></i>';
+
+            if (isEditMode) {
+                title = '\n<div class="ui fluid action input js-todo-title-editing" style="width: 100%;">\n  <input type="text" value="' + this.data.do + '">\n  <div class="ui button">Update</div>\n</div>\n            ';
+                close = '';
+            }
+
             /* DONT TRY THID AT HOME
             const colorClass = (complete) ? 'red' : 
                                             (important) ? 'purple' : 
                                                           'green';
             */
 
-            this.root.innerHTML = '\n<div class="ui segment ' + colorClass + '">\n    <div style="display: flex; width: 100%;">\n        <h4 style="margin-bottom: 0;">' + this.data.do + '</h4>\n        <i style="text-align: right; width: 100%; cursor: pointer;" class="icon remove js-remove"></i>\n    </div>\n    ' + this.renderImportantButton() + '\n    ' + this.renderCompleteButton() + '\n</div>\n        ';
+            this.root.innerHTML = '\n<div class="ui segment ' + colorClass + '">\n    <div style="display: flex; width: 100%;">\n        ' + title + '\n        ' + close + '\n    </div>\n    ' + this.renderImportantButton() + '\n    ' + this.renderCompleteButton() + '\n</div>\n        ';
         }
     }, {
         key: 'renderCompleteButton',

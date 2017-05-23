@@ -10,4 +10,7 @@ export default class BaseComponent {
 		this.root = root;
         this.rootClassName = `.${className}`;
 	}
+	isTarget(className,target) {
+		return target.classList.contains(className) || target.closest(`.${className}`);
+	}
 }
