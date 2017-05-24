@@ -1,4 +1,5 @@
 import BaseComponent from './BaseComponent';
+import {MIN_CHARACTERS_ALLOWED} from '../store';
 
 export class TodoItem extends BaseComponent {
     constructor(ListItem, container, dispatcher) {
@@ -9,6 +10,8 @@ export class TodoItem extends BaseComponent {
 
         this.state = {
             isEditMode: false,
+            isInvalidInput: false,
+            val: '',
         }        
 
         this.initEvents();
@@ -35,17 +38,37 @@ export class TodoItem extends BaseComponent {
             if (this.isTarget('js-todo-title',target)) {
                 this.state.isEditMode = true;
                 this.render();
-            }          
+            } 
+            if (this.isTarget('js-todo-title-update', target)) {
+                if (this.state.val.length < MIN_CHARACTERS_ALLOWED) {
+                    this.state.isInvalidInput = true;
+                    this.render();
+                }
+                else {
+                    // lol dispatch
+                    this.state.val = '';
+                }
+            }         
         });
 
         this.root.addEventListener('keyup', ({target, keyCode}) => {
             if (this.isTarget('js-todo-title-editing', target)) {
                 if (keyCode === 27) {
                     this.state.isEditMode = false;
+                    this.state.isInvalidInput = false;
+                    this.state.val = '';
                     this.render();
                 }
             }
         });
+
+        this.root.addEventListener('change', ({target, keyCode}) => {
+            if (this.isTarget('js-todo-title-editing', target)) {
+                this.state.val = target.value;
+            }
+        });
+
+
     }
     refreshProps(newProps) {
         this.data = newProps;
@@ -71,10 +94,18 @@ export class TodoItem extends BaseComponent {
         let close = `<i style="text-align: right; cursor: pointer;" class="icon remove js-remove"></i>`;
 
         if (isEditMode) {
+            const {isInvalidInput} = this.state;
+            let label = '';
+            if (isInvalidInput) {
+                label = `Please enter an item that is at least ${MIN_CHARACTERS_ALLOWED} characters long`
+            }
             title = `
-<div class="ui fluid action input js-todo-title-editing" style="width: 100%;">
-  <input type="text" value="${this.data.do}">
-  <div class="ui button">Update</div>
+<div style="width: 100%;">
+    ${label}
+    <div class="ui fluid action input js-todo-title-editing" style="width: 100%;">
+      <input type="text" value="${this.data.do}">
+      <div class="ui button js-todo-title-update" >Update</div>
+    </div>
 </div>
             `;
             close = '';

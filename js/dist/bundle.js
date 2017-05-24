@@ -238,6 +238,8 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
+var _store = __webpack_require__(7);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -256,6 +258,10 @@ var TodoInput = function (_BaseComponent) {
 
 		_this.dispatcher = dispatcher || function () {
 			return null;
+		};
+
+		_this.state = {
+			isInvalidInput: false
 		};
 
 		_this.value = currentTodoValue;
@@ -287,15 +293,28 @@ var TodoInput = function (_BaseComponent) {
 	}, {
 		key: 'render',
 		value: function render() {
-			this.root.innerHTML = '\n<div class="ui fluid icon input">\n    <input type="text" placeholder="Search a very wide input..." value="' + this.value + '" autofocus="true">\n    <i class="search icon"></i>\n</div> \t\t\n\t\t';
+			var isInvalidInput = this.state.isInvalidInput;
+
+			var label = '';
+			if (isInvalidInput) {
+				label = 'Please enter an item that is at least ' + _store.MIN_CHARACTERS_ALLOWED + ' characters long';
+			}
+			this.root.innerHTML = '\n<div>\n\t' + label + '\n\t<div class="ui fluid icon input">\n\t    <input type="text" placeholder="Search a very wide input..." value="' + this.value + '" autofocus="true">\n\t    <i class="search icon"></i>\n\t</div> \t\n</div>\t\n\t\t';
 		}
 	}, {
 		key: 'updateValue',
 		value: function updateValue(value, keyCode) {
 			if (keyCode === 13) {
-				this.dispatcher('CREATE_TODO', {
-					newTodoText: value
-				});
+				if (value.length < _store.MIN_CHARACTERS_ALLOWED) {
+					// update state
+					this.state.isInvalidInput = true;
+					this.render();
+				} else {
+					this.state.isInvalidInput = false;
+					this.dispatcher('CREATE_TODO', {
+						newTodoText: value
+					});
+				} // else
 			}
 		}
 	}]);
@@ -353,6 +372,9 @@ var TodoList = exports.TodoList = function (_BaseComponent) {
 
         _this.dispatcher = dispatcher;
         _this.container = container;
+        _this.data = {};
+        _this.data.todos = todos;
+
         _this.todoItemComponents = todos.map(function (todo) {
             return new _TodoItem.TodoItem(todo, _this.rootClassName, _this.dispatcher);
         });
@@ -366,9 +388,33 @@ var TodoList = exports.TodoList = function (_BaseComponent) {
 
             this.root.innerHTML = '';
 
-            this.todoItemComponents = newProps.map(function (todo) {
+            var newComponents = newProps.map(function (todo) {
                 return new _TodoItem.TodoItem(todo, _this2.rootClassName, _this2.dispatcher);
             });
+
+            newComponents.forEach(function (todo, i) {
+                var _do = todo.data.do;
+                _this2.todoItemComponents.forEach(function (oldTodo, j) {
+                    if (oldTodo.data.do === _do && oldTodo.state.isEditMode) {
+                        todo.state = oldTodo.state;
+                        todo.render();
+                    }
+                });
+            });
+
+            this.todoItemComponents = newComponents;
+
+            // this.todoItemComponents = newProps.map((todo, i) => {
+            //     const newTodo = new TodoItem(todo, this.rootClassName, this.dispatcher);
+            //     const oldTodo = this.todoItemComponents[i] ? this.todoItemComponents[i] : null;
+
+            //     if (oldTodo) {
+            //         newTodo.state = Object.assign({},oldTodo.state);
+            //         newTodo.render();
+            //     }
+
+            //     return newTodo;
+            // });
         }
     }]);
 
@@ -489,6 +535,8 @@ var dispatcher = exports.dispatcher = function dispatcher(store, actions, render
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var MIN_CHARACTERS_ALLOWED = exports.MIN_CHARACTERS_ALLOWED = 3;
+
 var AppData = exports.AppData = {
 	todos: [],
 	nextTaskIndex: -1,
@@ -650,6 +698,8 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
+var _store = __webpack_require__(7);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -670,7 +720,9 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
         _this.data = ListItem;
 
         _this.state = {
-            isEditMode: false
+            isEditMode: false,
+            isInvalidInput: false,
+            val: ''
         };
 
         _this.initEvents();
@@ -706,6 +758,15 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                     _this2.state.isEditMode = true;
                     _this2.render();
                 }
+                if (_this2.isTarget('js-todo-title-update', target)) {
+                    if (_this2.state.val.length < _store.MIN_CHARACTERS_ALLOWED) {
+                        _this2.state.isInvalidInput = true;
+                        _this2.render();
+                    } else {
+                        // lol dispatch
+                        _this2.state.val = '';
+                    }
+                }
             });
 
             this.root.addEventListener('keyup', function (_ref) {
@@ -715,8 +776,19 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                 if (_this2.isTarget('js-todo-title-editing', target)) {
                     if (keyCode === 27) {
                         _this2.state.isEditMode = false;
+                        _this2.state.isInvalidInput = false;
+                        _this2.state.val = '';
                         _this2.render();
                     }
+                }
+            });
+
+            this.root.addEventListener('change', function (_ref2) {
+                var target = _ref2.target,
+                    keyCode = _ref2.keyCode;
+
+                if (_this2.isTarget('js-todo-title-editing', target)) {
+                    _this2.state.val = target.value;
                 }
             });
         }
@@ -750,7 +822,13 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
             var close = '<i style="text-align: right; cursor: pointer;" class="icon remove js-remove"></i>';
 
             if (isEditMode) {
-                title = '\n<div class="ui fluid action input js-todo-title-editing" style="width: 100%;">\n  <input type="text" value="' + this.data.do + '">\n  <div class="ui button">Update</div>\n</div>\n            ';
+                var isInvalidInput = this.state.isInvalidInput;
+
+                var label = '';
+                if (isInvalidInput) {
+                    label = 'Please enter an item that is at least ' + _store.MIN_CHARACTERS_ALLOWED + ' characters long';
+                }
+                title = '\n<div style="width: 100%;">\n    ' + label + '\n    <div class="ui fluid action input js-todo-title-editing" style="width: 100%;">\n      <input type="text" value="' + this.data.do + '">\n      <div class="ui button js-todo-title-update" >Update</div>\n    </div>\n</div>\n            ';
                 close = '';
             }
 

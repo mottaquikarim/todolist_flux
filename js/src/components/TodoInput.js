@@ -1,10 +1,16 @@
 import BaseComponent from './BaseComponent';
+import {MIN_CHARACTERS_ALLOWED} from '../store';
 
 class TodoInput extends BaseComponent {
 	constructor(currentTodoValue, container, dispatcher) {
 		super(container);
 
         this.dispatcher = dispatcher || (() => null);
+
+
+		this.state = {
+            isInvalidInput: false,
+        };
 
 		this.value = currentTodoValue;
 		this.initEvents();
@@ -25,18 +31,34 @@ class TodoInput extends BaseComponent {
         this.render();
     }
 	render() {
+		const {isInvalidInput} = this.state;
+		let label = '';
+		if (isInvalidInput) {
+			label = `Please enter an item that is at least ${MIN_CHARACTERS_ALLOWED} characters long`
+		}
 		this.root.innerHTML = `
-<div class="ui fluid icon input">
-    <input type="text" placeholder="Search a very wide input..." value="${this.value}" autofocus="true">
-    <i class="search icon"></i>
-</div> 		
+<div>
+	${label}
+	<div class="ui fluid icon input">
+	    <input type="text" placeholder="Search a very wide input..." value="${this.value}" autofocus="true">
+	    <i class="search icon"></i>
+	</div> 	
+</div>	
 		`
 	}
 	updateValue(value, keyCode) {
 		if (keyCode === 13) {
-            this.dispatcher('CREATE_TODO', {
-                newTodoText: value, 
-            });
+			if (value.length < MIN_CHARACTERS_ALLOWED) {
+				// update state
+				this.state.isInvalidInput = true;
+				this.render();
+			}
+			else {
+				this.state.isInvalidInput = false;
+				this.dispatcher('CREATE_TODO', {
+		            newTodoText: value, 
+		        });
+			} // else
 		}
 	}
 }

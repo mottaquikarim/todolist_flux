@@ -7,6 +7,9 @@ export class TodoList extends BaseComponent {
 
         this.dispatcher = dispatcher;
         this.container = container;
+        this.data = {};
+        this.data.todos = todos;
+
         this.todoItemComponents = todos.map(
             todo => new TodoItem(todo, this.rootClassName, this.dispatcher)
         );
@@ -14,9 +17,33 @@ export class TodoList extends BaseComponent {
     refreshProps(newProps) {
         this.root.innerHTML = '';
 
-        this.todoItemComponents = newProps.map(
+        const newComponents = newProps.map(
             todo => new TodoItem(todo, this.rootClassName, this.dispatcher)
         );
+
+        newComponents.forEach((todo, i) => {
+            const _do = todo.data.do;
+            this.todoItemComponents.forEach((oldTodo, j) => {
+                if (oldTodo.data.do === _do && oldTodo.state.isEditMode) {
+                    todo.state = oldTodo.state;
+                    todo.render();
+                }
+            })
+        });
+
+        this.todoItemComponents = newComponents;
+
+        // this.todoItemComponents = newProps.map((todo, i) => {
+        //     const newTodo = new TodoItem(todo, this.rootClassName, this.dispatcher);
+        //     const oldTodo = this.todoItemComponents[i] ? this.todoItemComponents[i] : null;
+
+        //     if (oldTodo) {
+        //         newTodo.state = Object.assign({},oldTodo.state);
+        //         newTodo.render();
+        //     }
+
+        //     return newTodo;
+        // });
     }
 }
 
