@@ -120,6 +120,26 @@ exports.default = BaseComponent;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var MIN_CHARACTERS_ALLOWED = exports.MIN_CHARACTERS_ALLOWED = 3;
+
+var AppData = exports.AppData = {
+	todos: [],
+	nextTaskIndex: -1,
+	numComplete: 0,
+	numLeft: 0,
+	currentTodoValue: ''
+};
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 exports.actions = undefined;
 
 var _reducers = __webpack_require__(12);
@@ -140,7 +160,7 @@ var actions = exports.actions = {
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -220,7 +240,7 @@ var betterCounter = exports.betterCounter = function betterCounter() {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -238,7 +258,7 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-var _store = __webpack_require__(7);
+var _store = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -331,7 +351,7 @@ function todoInput() {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -430,7 +450,7 @@ function todoList() {
 }
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -509,7 +529,7 @@ var TestComp = exports.TestComp = function (_ReactLite) {
 }(_ReactLiteLOL2.default);
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -524,26 +544,6 @@ var dispatcher = exports.dispatcher = function dispatcher(store, actions, render
 		render(store);
 	}; // what to return
 }; // dispatcher
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-var MIN_CHARACTERS_ALLOWED = exports.MIN_CHARACTERS_ALLOWED = 3;
-
-var AppData = exports.AppData = {
-	todos: [],
-	nextTaskIndex: -1,
-	numComplete: 0,
-	numLeft: 0,
-	currentTodoValue: ''
-};
 
 /***/ }),
 /* 8 */
@@ -698,7 +698,7 @@ var _BaseComponent2 = __webpack_require__(0);
 
 var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-var _store = __webpack_require__(7);
+var _store = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -722,7 +722,7 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
         _this.state = {
             isEditMode: false,
             isInvalidInput: false,
-            val: ''
+            val: _this.data.do
         };
 
         _this.initEvents();
@@ -759,19 +759,31 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                     _this2.render();
                 }
                 if (_this2.isTarget('js-todo-title-update', target)) {
-                    if (_this2.state.val.length < _store.MIN_CHARACTERS_ALLOWED) {
-                        _this2.state.isInvalidInput = true;
-                        _this2.render();
-                    } else {
-                        // lol dispatch
-                        _this2.state.val = '';
-                    }
+
+                    // lol dispatch
+                    _this2.state.val = '';
                 }
             });
 
-            this.root.addEventListener('keyup', function (_ref) {
+            this.root.addEventListener('input', function (_ref) {
                 var target = _ref.target,
                     keyCode = _ref.keyCode;
+
+                if (_this2.isTarget('js-todo-title-editing', target)) {
+                    _this2.state.val = target.value;
+                    console.log('keyup occurred', _this2.state.val, target, keyCode);
+                    if (_this2.state.val.length < _store.MIN_CHARACTERS_ALLOWED) {
+                        _this2.state.isInvalidInput = true;
+                    } else {
+                        _this2.state.isInvalidInput = false;
+                    }
+                    _this2.render();
+                }
+            });
+
+            this.root.addEventListener('keyup', function (_ref2) {
+                var target = _ref2.target,
+                    keyCode = _ref2.keyCode;
 
                 if (_this2.isTarget('js-todo-title-editing', target)) {
                     if (keyCode === 27) {
@@ -783,11 +795,12 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
                 }
             });
 
-            this.root.addEventListener('change', function (_ref2) {
-                var target = _ref2.target,
-                    keyCode = _ref2.keyCode;
+            this.root.addEventListener('change', function (_ref3) {
+                var target = _ref3.target,
+                    keyCode = _ref3.keyCode;
 
                 if (_this2.isTarget('js-todo-title-editing', target)) {
+                    console.log('here');
                     _this2.state.val = target.value;
                 }
             });
@@ -822,13 +835,16 @@ var TodoItem = exports.TodoItem = function (_BaseComponent) {
             var close = '<i style="text-align: right; cursor: pointer;" class="icon remove js-remove"></i>';
 
             if (isEditMode) {
-                var isInvalidInput = this.state.isInvalidInput;
+                var _state = this.state,
+                    isInvalidInput = _state.isInvalidInput,
+                    val = _state.val;
 
+                console.log(val);
                 var label = '';
                 if (isInvalidInput) {
                     label = 'Please enter an item that is at least ' + _store.MIN_CHARACTERS_ALLOWED + ' characters long';
                 }
-                title = '\n<div style="width: 100%;">\n    ' + label + '\n    <div class="ui fluid action input js-todo-title-editing" style="width: 100%;">\n      <input type="text" value="' + this.data.do + '">\n      <div class="ui button js-todo-title-update" >Update</div>\n    </div>\n</div>\n            ';
+                title = '\n<div style="width: 100%;">\n    ' + label + '\n    <div class="ui fluid action input" style="width: 100%;">\n      <input type="text" value="' + val + '" class="js-todo-title-editing">\n      <button class="ui button js-todo-title-update" ' + (isInvalidInput ? "disabled" : "") + ' >Update</button>\n    </div>\n</div>\n            ';
                 close = '';
             }
 
@@ -880,19 +896,19 @@ function todoItem() {
 "use strict";
 
 
-var _dispatcher = __webpack_require__(6);
+var _dispatcher = __webpack_require__(7);
 
-var _store = __webpack_require__(7);
+var _store = __webpack_require__(1);
 
-var _actions = __webpack_require__(1);
+var _actions = __webpack_require__(2);
 
-var _TodoInput = __webpack_require__(3);
+var _TodoInput = __webpack_require__(4);
 
-var _TodoList = __webpack_require__(4);
+var _TodoList = __webpack_require__(5);
 
-var _BetterCounter = __webpack_require__(2);
+var _BetterCounter = __webpack_require__(3);
 
-var _testComp = __webpack_require__(5);
+var _testComp = __webpack_require__(6);
 
 /* COMPONENTS */
 document.querySelector('#app').innerHTML = ""; /* FLUX REQUIREMENTS */

@@ -11,7 +11,7 @@ export class TodoItem extends BaseComponent {
         this.state = {
             isEditMode: false,
             isInvalidInput: false,
-            val: '',
+            val: this.data.do,
         }        
 
         this.initEvents();
@@ -40,16 +40,27 @@ export class TodoItem extends BaseComponent {
                 this.render();
             } 
             if (this.isTarget('js-todo-title-update', target)) {
-                if (this.state.val.length < MIN_CHARACTERS_ALLOWED) {
-                    this.state.isInvalidInput = true;
-                    this.render();
-                }
-                else {
+                
+                
                     // lol dispatch
                     this.state.val = '';
-                }
+                
             }         
         });
+
+        this.root.addEventListener('input', ({target, keyCode}) => {
+            if (this.isTarget('js-todo-title-editing', target)) {
+                this.state.val = target.value;
+                console.log('keyup occurred', this.state.val, target, keyCode)
+                if (this.state.val.length < MIN_CHARACTERS_ALLOWED) {
+                    this.state.isInvalidInput = true;  
+                }
+                else {
+                    this.state.isInvalidInput = false;
+                }
+                this.render();
+            }
+        })
 
         this.root.addEventListener('keyup', ({target, keyCode}) => {
             if (this.isTarget('js-todo-title-editing', target)) {
@@ -64,6 +75,7 @@ export class TodoItem extends BaseComponent {
 
         this.root.addEventListener('change', ({target, keyCode}) => {
             if (this.isTarget('js-todo-title-editing', target)) {
+                console.log('here')
                 this.state.val = target.value;
             }
         });
@@ -94,7 +106,8 @@ export class TodoItem extends BaseComponent {
         let close = `<i style="text-align: right; cursor: pointer;" class="icon remove js-remove"></i>`;
 
         if (isEditMode) {
-            const {isInvalidInput} = this.state;
+            const {isInvalidInput, val} = this.state;
+            console.log(val)
             let label = '';
             if (isInvalidInput) {
                 label = `Please enter an item that is at least ${MIN_CHARACTERS_ALLOWED} characters long`
@@ -102,9 +115,9 @@ export class TodoItem extends BaseComponent {
             title = `
 <div style="width: 100%;">
     ${label}
-    <div class="ui fluid action input js-todo-title-editing" style="width: 100%;">
-      <input type="text" value="${this.data.do}">
-      <div class="ui button js-todo-title-update" >Update</div>
+    <div class="ui fluid action input" style="width: 100%;">
+      <input type="text" value="${val}" class="js-todo-title-editing">
+      <button class="ui button js-todo-title-update" ${isInvalidInput ? "disabled" : ""} >Update</button>
     </div>
 </div>
             `;
