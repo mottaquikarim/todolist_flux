@@ -3,7 +3,7 @@
 How to clone:
 
 ```bash
-git clone --branch lecture_56_inclassnotes https://github.com/mottaquikarim/todolist_flux
+git clone --branch lecture_56_inclassnotes-validate_input-with-disabled-button https://github.com/mottaquikarim/todolist_flux
 ```
 
 ## Requirements
