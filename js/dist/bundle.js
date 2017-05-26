@@ -9614,32 +9614,69 @@ var CompB = function (_Component2) {
 	return CompB;
 }(_react.Component);
 
+var CompC = function (_Component3) {
+	_inherits(CompC, _Component3);
+
+	function CompC() {
+		_classCallCheck(this, CompC);
+
+		return _possibleConstructorReturn(this, (CompC.__proto__ || Object.getPrototypeOf(CompC)).apply(this, arguments));
+	}
+
+	_createClass(CompC, [{
+		key: 'render',
+		value: function render() {
+			var numC = this.props.numC;
+
+			console.log(numC);
+			if (numC % 10 === 0) {
+				return _react2.default.createElement(
+					'div',
+					null,
+					numC
+				);
+			}
+
+			return _react2.default.createElement(
+				'div',
+				null,
+				'Not divisible by 10'
+			);
+		}
+	}]);
+
+	return CompC;
+}(_react.Component);
+
 var makeUpdate = exports.makeUpdate = function makeUpdate(oldStore) {
 	var numB = oldStore.numB,
-	    messageA = oldStore.messageA;
+	    messageA = oldStore.messageA,
+	    numState = oldStore.numState;
 
 
 	return Object.assign({}, oldStore, {
 		numB: numB + 1,
-		messageA: messageA + String.fromCharCode(Math.floor(Math.random() * 255))
+		messageA: messageA + String.fromCharCode(Math.floor(Math.random() * 255)),
+		numState: numState + 15
 	});
 };
 
 var Store = {
 	numB: 0,
-	messageA: ''
+	messageA: '',
+	numState: 0
 };
 
-var Main = function (_Component3) {
-	_inherits(Main, _Component3);
+var Main = function (_Component4) {
+	_inherits(Main, _Component4);
 
 	function Main(props) {
 		_classCallCheck(this, Main);
 
-		var _this3 = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+		var _this4 = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
 
-		_this3.state = Store;
-		return _this3;
+		_this4.state = Store;
+		return _this4;
 	}
 
 	_createClass(Main, [{
@@ -9655,7 +9692,7 @@ var Main = function (_Component3) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this4 = this;
+			var _this5 = this;
 
 			return _react2.default.createElement(
 				'div',
@@ -9665,12 +9702,13 @@ var Main = function (_Component3) {
 					{
 						className: 'ui primary button',
 						onClick: function onClick(e) {
-							return _this4.onBtnClick(e);
+							return _this5.onBtnClick(e);
 						} },
 					'Foobar'
 				),
 				_react2.default.createElement(CompA, { messageA: this.state.messageA }),
-				_react2.default.createElement(CompB, { numB: this.state.numB })
+				_react2.default.createElement(CompB, { numB: this.state.numB }),
+				_react2.default.createElement(CompC, { numC: this.state.numState })
 			);
 		}
 	}]);
