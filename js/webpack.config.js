@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
  
 module.exports = {
-  entry: './src/index.js',
+  entry: './reactcomps/index.js',
   output: { path: __dirname, filename: './dist/bundle.js' },
   module: {
     loaders: [
